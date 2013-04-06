@@ -4,7 +4,7 @@
   <artifactId>hiveworker</artifactId>
   <version>0.0.1-SNAPSHOT</version>
   <name>${project.artifactId}</name>
-  <description>URL shortener in Scala using Finagle</description>
+  <description>Hive Job submittal to AWS EMR in Scala using Finagle</description>
   <inceptionYear>2012</inceptionYear>
   <url>http://github.com/cacoco/hiveworker</url>
 
@@ -212,24 +212,6 @@
           </execution>
         </executions>
       </plugin>
-      <!--<plugin>-->
-        <!--<groupId>org.codehaus.mojo</groupId>-->
-        <!--<artifactId>properties-maven-plugin</artifactId>-->
-        <!--<version>1.0-alpha-2</version>-->
-        <!--<executions>-->
-          <!--<execution>-->
-            <!--<phase>generate-resources</phase>-->
-            <!--<goals>-->
-              <!--<goal>write-project-properties</goal>-->
-            <!--</goals>-->
-            <!--<configuration>-->
-              <!--<outputFile>-->
-                <!--${project.build.directory}/classes/version.properties-->
-              <!--</outputFile>-->
-            <!--</configuration>-->
-          <!--</execution>-->
-        <!--</executions>-->
-      <!--</plugin>-->
 
       <plugin>
         <groupId>net.alchim31.maven</groupId>
