@@ -15,9 +15,9 @@ object Version {
     val properties = new Properties
     properties.load(inputStream)
 
-    version = properties.getProperty("version")
-    build = properties.getProperty("build")
-    timestamp = properties.getProperty("timestamp")
+    version = properties.getProperty("io.angstrom.hiveworker.build.version")
+    build = properties.getProperty("io.angstrom.hiveworker.build.revision")
+    timestamp = properties.getProperty("io.angstrom.hiveworker.build.timestamp")
   } finally {
     inputStream.close()
   }

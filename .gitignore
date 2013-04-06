@@ -1,4 +1,5 @@
 logs/
+config/
 target/
 *.DS_Store
 *.releaseBackup

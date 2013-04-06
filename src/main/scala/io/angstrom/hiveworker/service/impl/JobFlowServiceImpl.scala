@@ -53,9 +53,7 @@ class JobFlowServiceImpl(
   }
 
   protected[this] def createJobFlowRequest(jobFlowConfiguration: JobFlowConfiguration): RunJobFlowRequest = {
-    val name = jobFlowConfiguration.name match {
-      case Some(n) => n
-      case _ =>
+    val name = jobFlowConfiguration.name getOrElse {
         // use script name with a timestamp
         val script = jobFlowConfiguration.script.replaceAll(".q", "")
         "%s %s".format(script, System.currentTimeMillis())
