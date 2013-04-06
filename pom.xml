@@ -1,0 +1,403 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>io.angstrom</groupId>
+  <artifactId>hiveworker</artifactId>
+  <version>0.0.1-SNAPSHOT</version>
+  <name>${project.artifactId}</name>
+  <description>URL shortener in Scala using Finagle</description>
+  <inceptionYear>2012</inceptionYear>
+  <url>http://github.com/cacoco/hiveworker</url>
+
+  <scm>
+    <connection>scm:git:git@github.com:cacoco/hiveworker.git</connection>
+    <url>scm:git:git@github.com:cacoco/hiveworker.git</url>
+    <developerConnection>scm:git:git@github.com:cacoco/hiveworker.git</developerConnection>
+  </scm>
+
+  <licenses>
+    <license>
+      <name>The Apache Software License, Version 2.0</name>
+      <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+      <distribution>repo</distribution>
+    </license>
+  </licenses>
+
+  <properties>
+    <maven.compiler.source>1.6</maven.compiler.source>
+    <maven.compiler.target>1.6</maven.compiler.target>
+    <encoding>UTF-8</encoding>
+    <scala.version>2.10.1</scala.version>
+    <spring.version>3.2.2.RELEASE</spring.version>
+    <finagle.version>6.2.1</finagle.version>
+    <aws.jdk.version>1.4.1</aws.jdk.version>
+  </properties>
+
+  <!-- REPOSITORIES -->
+
+  <repositories>
+
+    <repository>
+      <id>Sonatype Snapshots</id>
+      <url>https://oss.sonatype.org/content/repositories/snapshots/</url>
+    </repository>
+
+    <repository>
+      <id>Sonatype Releases</id>
+      <url>https://oss.sonatype.org/content/repositories/releases/</url>
+    </repository>
+
+  </repositories>
+
+  <pluginRepositories>
+
+    <pluginRepository>
+      <id>scala-tools.org</id>
+      <name>Scala-Tools Maven2 Repository</name>
+      <url>http://scala-tools.org/repo-releases</url>
+    </pluginRepository>
+
+    <pluginRepository>
+      <id>sona</id>
+      <name>sonatype</name>
+      <url>https://oss.sonatype.org/content/groups/public</url>
+    </pluginRepository>
+
+    <pluginRepository>
+      <id>mc-release</id>
+      <name>Local Maven repository of releases</name>
+      <url>http://mc-repo.googlecode.com/svn/maven2/releases</url>
+      <snapshots>
+        <enabled>false</enabled>
+      </snapshots>
+      <releases>
+        <enabled>true</enabled>
+      </releases>
+    </pluginRepository>
+  </pluginRepositories>
+
+  <!-- END REPOSITORIES -->
+
+  <!-- DEPENDENCIES -->
+  <distributionManagement>
+    <repository>
+      <id>milestone.repo.springsource.org</id>
+      <name>repo.springsource.org-milestone</name>
+      <url>https://repo.springsource.org/libs-milestone</url>
+    </repository>
+  </distributionManagement>
+  <dependencies>
+    <dependency>
+      <groupId>com.amazonaws</groupId>
+      <artifactId>aws-java-sdk</artifactId>
+      <version>${aws.jdk.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>com.twitter</groupId>
+      <artifactId>finagle-core_2.10</artifactId>
+      <version>${finagle.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>com.twitter</groupId>
+      <artifactId>finagle-http_2.10</artifactId>
+      <version>${finagle.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>com.twitter</groupId>
+      <artifactId>finagle-ostrich4_2.10</artifactId>
+      <version>${finagle.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>org.scala-lang</groupId>
+      <artifactId>scala-library</artifactId>
+      <version>${scala.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>org.springframework</groupId>
+      <artifactId>spring-beans</artifactId>
+      <version>${spring.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework</groupId>
+      <artifactId>spring-context</artifactId>
+      <version>${spring.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework</groupId>
+      <artifactId>spring-context-support</artifactId>
+      <version>${spring.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework</groupId>
+      <artifactId>spring-core</artifactId>
+      <version>${spring.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework.scala</groupId>
+      <artifactId>spring-scala</artifactId>
+      <version>1.0.0.BUILD-SNAPSHOT</version>
+    </dependency>
+
+    <!-- test -->
+    <dependency>
+      <groupId>org.scalatest</groupId>
+      <artifactId>scalatest_2.10</artifactId>
+      <version>1.9.1</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.scalamock</groupId>
+      <artifactId>scalamock-scalatest-support_2.10</artifactId>
+      <version>3.0.1</version>
+      <scope>test</scope>
+    </dependency>
+
+  </dependencies>
+
+  <!-- END DEPENDENCIES -->
+
+  <!-- SCALADOC -->
+  <reporting>
+    <plugins>
+      <plugin>
+        <groupId>net.alchim31.maven</groupId>
+        <artifactId>scala-maven-plugin</artifactId>
+        <version>3.1.0</version>
+      </plugin>
+    </plugins>
+  </reporting>
+  <!-- END SCALADOC -->
+
+  <!-- BUILD SETTINGS -->
+  <build>
+    <sourceDirectory>src/main/scala</sourceDirectory>
+    <testSourceDirectory>src/test/scala</testSourceDirectory>
+
+    <!-- BUILD PLUGINS -->
+    <plugins>
+      <plugin>
+        <groupId>net.alchim31.maven</groupId>
+        <artifactId>scala-maven-plugin</artifactId>
+        <version>3.1.0</version>
+        <configuration>
+          <recompileMode>incremental</recompileMode>
+          <args>
+            <arg>-unchecked</arg>
+            <arg>-deprecation</arg>
+            <arg>-explaintypes</arg>
+          </args>
+          <launchers>
+            <launcher>
+              <id>main</id>
+              <mainClass>io.angstrom.hiveworker.Main</mainClass>
+              <Args>
+                <Arg>-f</Arg>
+                <Arg>${project.basedir}/src/main/resources/config.scala</Arg>
+              </Args>
+              <jvmArgs>
+                <jvmArg>-Dhiveworker.configuration=file://${project.basedir}/config/hiveworker.properties</jvmArg>
+              </jvmArgs>
+            </launcher>
+            <!-- you can define other launchers -->
+          </launchers>
+        </configuration>
+        <executions>
+          <execution>
+            <goals>
+              <goal>compile</goal>
+              <goal>testCompile</goal>
+            </goals>
+            <configuration>
+              <args>
+                <arg>-make:transitive</arg>
+                <arg>-dependencyfile</arg>
+                <arg>${project.build.directory}/.scala_dependencies</arg>
+              </args>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-assembly-plugin</artifactId>
+        <version>2.2-beta-5</version>
+        <configuration>
+          <descriptorRefs>
+            <descriptorRef>jar-with-dependencies</descriptorRef>
+          </descriptorRefs>
+          <archive>
+            <manifest>
+              <mainClass>io.angstrom.hiveworker.Main</mainClass>
+            </manifest>
+          </archive>
+        </configuration>
+        <executions>
+          <execution>
+            <phase>package</phase>
+            <goals>
+              <goal>single</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-surefire-plugin</artifactId>
+        <version>2.12</version>
+        <configuration>
+          <skipTests>true</skipTests>
+          <useSystemClassLoader>false</useSystemClassLoader>
+          <argLine>-Xmx1024m</argLine>
+          <includes>
+            <include>**/*Spec.java</include>
+          </includes>
+          <excludes>
+            <exclude>**/*Test.java</exclude>
+          </excludes>
+        </configuration>
+      </plugin>
+
+      <plugin>
+        <groupId>org.scalatest</groupId>
+        <artifactId>maven-scalatest-plugin</artifactId>
+        <version>1.0-SNAPSHOT</version>
+        <configuration>
+          <reportsDirectory>${project.build.directory}/surefire-reports</reportsDirectory>
+          <junitxml>.</junitxml>
+          <filereports>WDF TestSuite.txt</filereports>
+        </configuration>
+        <executions>
+          <execution>
+            <id>test</id>
+            <goals>
+              <goal>test</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-source-plugin</artifactId>
+        <version>2.1.2</version>
+        <executions>
+          <execution>
+            <id>attach-sources</id>
+            <goals>
+              <goal>jar</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-resources-plugin</artifactId>
+        <version>2.5</version>
+        <configuration>
+          <encoding>UTF-8</encoding>
+        </configuration>
+      </plugin>
+
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-release-plugin</artifactId>
+        <version>2.3.2</version>
+      </plugin>
+
+    </plugins>
+    <!-- END BUILD PLUGINS -->
+
+    <!-- EXTENSIONS -->
+    <extensions>
+      <extension>
+        <groupId>org.apache.maven.wagon</groupId>
+        <artifactId>wagon-ssh-external</artifactId>
+        <version>1.0-beta-7</version>
+      </extension>
+    </extensions>
+    <!-- END EXTENSIONS -->
+
+  </build>
+
+  <profiles>
+    <!-- GPG JAR SIGNING -->
+    <profile>
+      <id>sign</id>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-gpg-plugin</artifactId>
+            <version>1.2</version>
+            <executions>
+              <execution>
+                <id>sign-artifacts</id>
+                <phase>verify</phase>
+                <goals>
+                  <goal>sign</goal>
+                </goals>
+              </execution>
+            </executions>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+    <!-- END GPG JAR SIGNING -->
+    <profile>
+      <id>debug</id>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>net.alchim31.maven</groupId>
+            <artifactId>scala-maven-plugin</artifactId>
+            <version>3.1.0</version>
+            <configuration>
+              <recompileMode>incremental</recompileMode>
+              <args>
+                <arg>-unchecked</arg>
+                <arg>-deprecation</arg>
+                <arg>-explaintypes</arg>
+              </args>
+              <launchers>
+                <launcher>
+                  <id>main</id>
+                  <mainClass>io.angstrom.hiveworker.Main</mainClass>
+                  <jvmArgs>
+                    <jvmArg>-Xdebug</jvmArg>
+                    <jvmArg>-Xrunjdwp:transport=dt_socket,server=y,suspend=n,address=5005</jvmArg>
+                    <jvmArg>-Dhiveworker.configuration=file://${project.basedir}/config/hiveworker.properties</jvmArg>
+                  </jvmArgs>
+                  <Args>
+                    <Arg>-f</Arg>
+                    <Arg>${project.basedir}/src/main/resources/config.scala</Arg>
+                  </Args>
+                </launcher>
+                <!-- you could define other launcher -->
+              </launchers>
+            </configuration>
+            <executions>
+              <execution>
+                <goals>
+                  <goal>compile</goal>
+                  <goal>testCompile</goal>
+                </goals>
+                <configuration>
+                  <args>
+                    <arg>-make:transitive</arg>
+                    <arg>-dependencyfile</arg>
+                    <arg>${project.build.directory}/.scala_dependencies</arg>
+                  </args>
+                </configuration>
+              </execution>
+            </executions>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+  </profiles>
+</project>

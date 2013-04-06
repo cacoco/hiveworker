@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd">
+
+  <bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+    <property name="locations" value="${hiveworker.configuration}"/>
+  </bean>
+
+  <bean id="awsCredentials" class="com.amazonaws.auth.BasicAWSCredentials">
+    <constructor-arg index="0" type="java.lang.String" value="${aws.access.key}"/>
+    <constructor-arg index="1" type="java.lang.String" value="${aws.access.secret.key}"/>
+  </bean>
+
+  <bean id="clientConfiguration" class="com.amazonaws.ClientConfiguration">
+    <property name="socketTimeout" value="${aws.client.socket.timeout}"/>
+    <property name="connectionTimeout" value="${aws.client.connection.timeout}"/>
+    <property name="maxConnections" value="${aws.client.max.connections}"/>
+  </bean>
+
+  <bean id="elasticMapReduce" class="com.amazonaws.services.elasticmapreduce.AmazonElasticMapReduceClient">
+    <constructor-arg index="0" type="com.amazonaws.auth.AWSCredentials" ref="awsCredentials"/>
+    <constructor-arg index="1" type="com.amazonaws.ClientConfiguration" ref="clientConfiguration"/>
+  </bean>
+
+  <bean id="amazonSNS" class="com.amazonaws.services.sns.AmazonSNSClient">
+    <constructor-arg index="0" type="com.amazonaws.auth.AWSCredentials" ref="awsCredentials"/>
+    <constructor-arg index="1" type="com.amazonaws.ClientConfiguration" ref="clientConfiguration"/>
+  </bean>
+
+  <bean id="amazonSQS" class="com.amazonaws.services.sqs.AmazonSQSClient">
+    <constructor-arg index="0" type="com.amazonaws.auth.AWSCredentials" ref="awsCredentials"/>
+    <constructor-arg index="1" type="com.amazonaws.ClientConfiguration" ref="clientConfiguration"/>
+  </bean>
+
+  <bean id="defaultTopicARN" class="java.lang.String">
+    <constructor-arg value="${aws.sns.topic.arn.job.errors}"/>
+  </bean>
+
+  <bean id="bucket" class="java.lang.String">
+    <constructor-arg value="${hadoop.bucket}"/>
+  </bean>
+  <bean id="logUri" class="java.lang.String">
+    <constructor-arg value="${hadoop.log.uri}"/>
+  </bean>
+  <bean id="masterInstanceType" class="java.lang.String">
+    <constructor-arg value="${hadoop.instance.type.master}"/>
+  </bean>
+  <bean id="slaveInstanceType" class="java.lang.String">
+    <constructor-arg value="${hadoop.instance.type.slave}"/>
+  </bean>
+</beans>
