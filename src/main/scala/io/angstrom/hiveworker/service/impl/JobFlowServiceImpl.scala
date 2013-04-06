@@ -9,7 +9,6 @@ import io.angstrom.hiveworker.service.api.{SubmitJobFlowResult, JobFlowService}
 import io.angstrom.hiveworker.util.Step
 import io.angstrom.hiveworker.util.SystemConfiguration
 import java.util.Date
-import scala.Some
 import scala.collection.JavaConverters._
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.{Future, future}
