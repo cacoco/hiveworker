@@ -14,7 +14,7 @@ class Config extends ServerConfig[Server] {
   var hiveEnvironmentConfig = required[HiveEnvironmentConfig]
 
   def apply(runtime: RuntimeEnvironment): Server = {
-    Logger.configure(loggerFactory.value)
+    Logger.configure(List(loggerFactory.value))
     new Server(this)
   }
 }

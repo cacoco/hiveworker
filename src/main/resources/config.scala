@@ -6,13 +6,13 @@ new Config {
   port = 9090
   name = "hiveworker"
 
-  loggerFactory = LoggerFactory (
+  loggerFactory = LoggerFactory(
     node = "",
     level = Some(Logger.INFO),
-    handlers = scala.List(ConsoleHandler())
+    handlers = ConsoleHandler()
   )
 
-  hiveEnvironmentConfig = HiveEnvironmentConfig (
+  hiveEnvironmentConfig = HiveEnvironmentConfig(
     hadoopVersion= "0.20.205",
     amiVersion = "2.0.4",
     hiveVersion = "0.7.1.3",
