@@ -7,7 +7,7 @@ import com.twitter.logging.Logger
 import io.angstrom.hiveworker.configuration.JobFlowConfiguration
 import io.angstrom.hiveworker.service.api.{SubmitJobFlowResult, JobFlowService}
 import io.angstrom.hiveworker.util.Step
-import io.angstrom.hiveworker.util.SystemConfiguration
+import io.angstrom.hiveworker.{DefaultHiveEnvironment, HiveEnvironment}
 import java.util.Date
 import scala.collection.JavaConverters._
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -33,6 +33,12 @@ class JobFlowServiceImpl(
 ) extends JobFlowService {
   val log = Logger.get(getClass)
 
+  private[this] var hiveEnvironmentOption: Option[HiveEnvironment] = None
+  def hiveEnvironment: Option[HiveEnvironment] = hiveEnvironmentOption
+  def hiveEnvironment_= (hiveEnvironment: Option[HiveEnvironment]) {
+    this.hiveEnvironmentOption = hiveEnvironment
+  }
+
   def submitJobFlow(attempt: Integer, jobFlowConfiguration: JobFlowConfiguration): Future[Try[SubmitJobFlowResult]] = {
     log.info("Creating job flow task for script: [%s], attempt: [%s]".format(jobFlowConfiguration.script, attempt))
 
@@ -52,6 +58,8 @@ class JobFlowServiceImpl(
   }
 
   protected[this] def createJobFlowRequest(jobFlowConfiguration: JobFlowConfiguration): RunJobFlowRequest = {
+    val hiveEnvironment = hiveEnvironmentOption getOrElse DefaultHiveEnvironment
+
     val name = jobFlowConfiguration.name getOrElse {
         // use script name with a timestamp
         val script = jobFlowConfiguration.script.replaceAll(".q", "")
@@ -65,8 +73,8 @@ class JobFlowServiceImpl(
     val configureDaemonsScriptBootstrapAction = new ScriptBootstrapActionConfig
     configureDaemonsScriptBootstrapAction.setPath("s3://elasticmapreduce/bootstrap-actions/configure-daemons")
     val args = Seq(
-      "--namenode-heap-size=%s".format(SystemConfiguration.NodeHeapSize),
-      "--datanode-heap-size=%s".format(SystemConfiguration.NodeHeapSize)
+      "--namenode-heap-size=%s".format(hiveEnvironment.nodeHeapSize),
+      "--datanode-heap-size=%s".format(hiveEnvironment.nodeHeapSize)
     )
     configureDaemonsScriptBootstrapAction.setArgs(args.asJavaCollection)
     __configureDaemons.setScriptBootstrapAction(configureDaemonsScriptBootstrapAction)
@@ -82,7 +90,7 @@ class JobFlowServiceImpl(
     val __installHive = new StepConfig()
       .withName("Setup/Install Hive")
       .withActionOnFailure(ActionOnFailure.TERMINATE_JOB_FLOW)
-      .withHadoopJarStep(stepFactory.newInstallHiveStep(SystemConfiguration.HiveVersion))
+      .withHadoopJarStep(stepFactory.newInstallHiveStep(hiveEnvironment.hiveVersion))
 
     val path = "%1$s/scripts/%2$s".format(bucket, jobFlowConfiguration.script)
     val __runHiveScript = new StepConfig()
@@ -102,20 +110,23 @@ class JobFlowServiceImpl(
     // Create JobFlowRequest
     val jobFlowRequest = new RunJobFlowRequest().
       withName(name).
-      withAmiVersion(SystemConfiguration.AmiVersion).
+      withAmiVersion(hiveEnvironment.amiVersion).
       withBootstrapActions(bootstrapActions.asJavaCollection).
       withSteps(__steps.asJavaCollection).
       withLogUri(logUri).
-      withInstances(getJobFlowInstancesConfig(jobFlowConfiguration.instances))
+      withInstances(getJobFlowInstancesConfig(jobFlowConfiguration.instances, hiveEnvironment.hadoopVersion))
 
     log.debug(String.format("RunJobFlowRequest: %s", jobFlowRequest.toString))
     jobFlowRequest
   }
 
-  protected[this] def getJobFlowInstancesConfig(instanceCountOverride: Option[Integer]): JobFlowInstancesConfig = {
+  protected[this] def getJobFlowInstancesConfig(
+    instanceCountOverride: Option[Integer],
+    hadoopVersion: String
+  ): JobFlowInstancesConfig = {
     new JobFlowInstancesConfig().
         withInstanceCount(instanceCountOverride getOrElse 1).
-        withHadoopVersion(SystemConfiguration.HadoopVersion).
+        withHadoopVersion(hadoopVersion).
         withMasterInstanceType(masterInstanceType).
         withSlaveInstanceType(slaveInstanceType)
   }

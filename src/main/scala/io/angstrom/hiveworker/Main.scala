@@ -13,7 +13,7 @@ object Main {
       log.info("Starting service")
       server.start()
     } catch {
-      case e: Exception =>
+      case e: Throwable =>
         log.error(e, "Failed starting service, exiting")
         ServiceTracker.shutdown()
         System.exit(1)

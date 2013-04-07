@@ -19,6 +19,7 @@ class Server(config: Config) extends OstrichService {
 
   val port = config.port.value
   val name = config.name.value
+  val hiveEnvironmentConfig = config.hiveEnvironmentConfig.value
 
   val log = Logger.get(getClass)
 
@@ -27,7 +28,7 @@ class Server(config: Config) extends OstrichService {
 
   // Don't initialize until after mixed in by another class
   lazy val handleExceptions = new HandleExceptionsFilter
-  lazy val respond = new HiveWorkerServiceImpl(context)
+  lazy val respond = new HiveWorkerServiceImpl(context, Some(hiveEnvironmentConfig()))
   lazy val service: Service[Request, Response] = handleExceptions andThen respond
 
   lazy val serverSpec = ServerBuilder()
@@ -37,9 +38,6 @@ class Server(config: Config) extends OstrichService {
     .reportTo(new OstrichStatsReceiver)
 
   override def start() {
-//    context = Some(
-//      new ClassPathXmlApplicationContext("classpath:hiveworker-context.xml"))
-//    context map { _.asInstanceOf[AbstractApplicationContext].registerShutdownHook() }
     context = Some(FunctionalConfigApplicationContext(classOf[ServicesConfiguration]))
 
     server = Some(serverSpec.build(service))

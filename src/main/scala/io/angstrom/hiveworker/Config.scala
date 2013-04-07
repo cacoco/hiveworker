@@ -1,23 +1,20 @@
 package io.angstrom.hiveworker
 
-import com.twitter.ostrich.admin.config.ServerConfig
+import com.twitter.logging.{LoggerFactory, Logger}
 import com.twitter.ostrich.admin.RuntimeEnvironment
-import com.twitter.logging.config.{ConsoleHandlerConfig, LoggerConfig}
-import com.twitter.logging.Logger
+import com.twitter.ostrich.admin.config.ServerConfig
+import io.angstrom.hiveworker.configuration.HiveEnvironmentConfig
 
 class Config extends ServerConfig[Server] {
 
   var port = required[Int]
   var name = required[String]
 
-  val logger = new LoggerConfig {
-    node = ""
-    level = Logger.INFO
-    handlers = new ConsoleHandlerConfig
-  }
+  var loggerFactory = required[LoggerFactory]
+  var hiveEnvironmentConfig = required[HiveEnvironmentConfig]
 
   def apply(runtime: RuntimeEnvironment): Server = {
-    Logger.configure(logger)
+    Logger.configure(loggerFactory.value)
     new Server(this)
   }
 }
