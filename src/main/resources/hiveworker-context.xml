@@ -38,6 +38,10 @@
     <constructor-arg value="${aws.sns.topic.arn.job.errors}"/>
   </bean>
 
+  <bean id="defaultQueueUrl" class="java.lang.String">
+    <constructor-arg value="${aws.sqs.queue.url.default}"/>
+  </bean>
+
   <bean id="bucket" class="java.lang.String">
     <constructor-arg value="${hadoop.bucket}"/>
   </bean>

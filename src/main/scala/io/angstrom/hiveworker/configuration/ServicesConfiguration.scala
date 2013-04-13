@@ -1,9 +1,10 @@
 package io.angstrom.hiveworker.configuration
 
-import org.springframework.scala.context.function.FunctionalConfiguration
-import io.angstrom.hiveworker.service.impl.{JobFlowServiceImpl, NotificationServiceImpl}
-import com.amazonaws.services.sns.AmazonSNS
 import com.amazonaws.services.elasticmapreduce.AmazonElasticMapReduce
+import com.amazonaws.services.sns.AmazonSNS
+import com.amazonaws.services.sqs.AmazonSQS
+import io.angstrom.hiveworker.service.impl.{QueueServiceImpl, JobFlowServiceImpl, NotificationServiceImpl}
+import org.springframework.scala.context.function.FunctionalConfiguration
 
 class ServicesConfiguration extends FunctionalConfiguration {
   importXml("classpath:/hiveworker-context.xml")
@@ -21,5 +22,11 @@ class ServicesConfiguration extends FunctionalConfiguration {
     new NotificationServiceImpl(
       getBean[AmazonSNS]("amazonSNS"),
       getBean[String]("defaultTopicARN"))
+  }
+
+  bean("queueService") {
+    new QueueServiceImpl(
+      getBean[AmazonSQS]("amazonSQS"),
+      getBean[String](""))
   }
 }
