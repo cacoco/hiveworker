@@ -1,20 +1,19 @@
 package io.angstrom.hiveworker.service.impl
 
 import com.twitter.finagle.Service
-import com.twitter.finagle.http.{Response, Request}
 import com.twitter.util.Future
 import io.angstrom.hiveworker.HiveEnvironment
 import io.angstrom.hiveworker.service.api.{QueueService, JobFlowService, NotificationService, HiveWorkerService}
 import io.angstrom.hiveworker.util.Version
-import org.jboss.netty.handler.codec.http.DefaultHttpResponse
 import org.jboss.netty.handler.codec.http.HttpResponseStatus._
 import org.jboss.netty.handler.codec.http.HttpVersion.HTTP_1_1
+import org.jboss.netty.handler.codec.http._
 import org.springframework.context.ApplicationContext
 
 class HiveWorkerServiceImpl(
   contextOption: Option[ApplicationContext],
   hiveEnvironment: Option[HiveEnvironment]
-) extends Service[Request, Response] with HiveWorkerService {
+) extends Service[HttpRequest, HttpResponse] with HiveWorkerService {
   lazy val notificationService: Option[NotificationService] =
     contextOption map { _.getBean("notificationService").asInstanceOf[NotificationService] }
 
@@ -28,7 +27,7 @@ class HiveWorkerServiceImpl(
       service
     }
 
-  def apply(request: Request) = {
+  def apply(request: HttpRequest): Future[HttpResponse] = {
     println(Version.build)
     println(Version.version)
     println(Version.timestamp)
@@ -37,7 +36,7 @@ class HiveWorkerServiceImpl(
     println(queueService)
     println(jobFlowService)
 
-    val response = Response(new DefaultHttpResponse(HTTP_1_1, OK))
+    val response = new DefaultHttpResponse(HTTP_1_1, OK)
     Future.value(response)
   }
 }

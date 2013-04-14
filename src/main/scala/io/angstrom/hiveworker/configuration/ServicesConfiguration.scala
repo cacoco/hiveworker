@@ -27,6 +27,6 @@ class ServicesConfiguration extends FunctionalConfiguration {
   bean("queueService") {
     new QueueServiceImpl(
       getBean[AmazonSQS]("amazonSQS"),
-      getBean[String](""))
+      getBean[String]("defaultQueueUrl"))
   }
 }

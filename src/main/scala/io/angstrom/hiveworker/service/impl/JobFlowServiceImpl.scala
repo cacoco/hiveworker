@@ -4,8 +4,7 @@ import com.amazonaws.services.elasticmapreduce.AmazonElasticMapReduce
 import com.amazonaws.services.elasticmapreduce.model._
 import com.amazonaws.services.elasticmapreduce.util.StepFactory
 import com.twitter.logging.Logger
-import io.angstrom.hiveworker.configuration.JobFlowConfiguration
-import io.angstrom.hiveworker.service.api.{SubmitJobFlowResult, JobFlowService}
+import io.angstrom.hiveworker.service.api.{JobFlow, SubmitJobFlowResult, JobFlowService}
 import io.angstrom.hiveworker.util.Step
 import io.angstrom.hiveworker.{DefaultHiveEnvironment, HiveEnvironment}
 import java.util.Date
@@ -39,14 +38,14 @@ class JobFlowServiceImpl(
     this.hiveEnvironmentOption = hiveEnvironment
   }
 
-  def submitJobFlow(attempt: Integer, jobFlowConfiguration: JobFlowConfiguration): Future[Try[SubmitJobFlowResult]] = {
-    log.info("Creating job flow task for script: [%s], attempt: [%s]".format(jobFlowConfiguration.script, attempt))
+  def submitJobFlow(attempt: Integer, jobFlow: JobFlow): Future[Try[SubmitJobFlowResult]] = {
+    log.info("Creating job flow task for script: [%s], attempt: [%s]".format(jobFlow.script, attempt))
 
-    val maxAttempts: Integer = jobFlowConfiguration.maxAttempts getOrElse 1
+    val maxAttempts: Integer = jobFlow.maxAttempts getOrElse 1
     if (attempt > maxAttempts) {
       return Future(Failure(new Exception("Max attempts: %s exceeded.".format(maxAttempts))))
     }
-    val request = createJobFlowRequest(jobFlowConfiguration)
+    val request = createJobFlowRequest(jobFlow)
     future {
       runJobFlow(request) match {
         case Success(jobFlowId) =>
@@ -57,7 +56,7 @@ class JobFlowServiceImpl(
     }
   }
 
-  protected[this] def createJobFlowRequest(jobFlowConfiguration: JobFlowConfiguration): RunJobFlowRequest = {
+  protected[this] def createJobFlowRequest(jobFlowConfiguration: JobFlow): RunJobFlowRequest = {
     val hiveEnvironment = hiveEnvironmentOption getOrElse DefaultHiveEnvironment
 
     val name = jobFlowConfiguration.name getOrElse {

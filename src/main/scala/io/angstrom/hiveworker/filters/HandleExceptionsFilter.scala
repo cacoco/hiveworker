@@ -1,6 +1,6 @@
 package io.angstrom.hiveworker.filters
 
-import com.twitter.finagle.http.{Response, Request}
+import com.twitter.finagle.http.Response
 import com.twitter.finagle.{Service, SimpleFilter}
 import org.jboss.netty.buffer.ChannelBuffers.copiedBuffer
 import org.jboss.netty.handler.codec.http.HttpResponseStatus._
@@ -8,8 +8,8 @@ import org.jboss.netty.handler.codec.http.HttpVersion.HTTP_1_1
 import org.jboss.netty.handler.codec.http._
 import org.jboss.netty.util.CharsetUtil.UTF_8
 
-class HandleExceptionsFilter extends SimpleFilter[Request, Response] {
-  def apply(request: Request, service: Service[Request, Response]) = {
+class HandleExceptionsFilter extends SimpleFilter[HttpRequest, HttpResponse] {
+  def apply(request: HttpRequest, service: Service[HttpRequest, HttpResponse]) = {
     // `handle` asynchronously handles exceptions.
     service(request) handle { case error =>
       val statusCode = error match {

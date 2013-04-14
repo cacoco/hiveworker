@@ -240,17 +240,6 @@
             <arg>-deprecation</arg>
             <arg>-explaintypes</arg>
           </args>
-          <launchers>
-            <launcher>
-              <id>main</id>
-              <mainClass>io.angstrom.hiveworker.Main</mainClass>
-              <Args>
-                <Arg>-f</Arg>
-                <Arg>${project.basedir}/src/main/resources/config.scala</Arg>
-              </Args>
-            </launcher>
-            <!-- you can define other launchers -->
-          </launchers>
         </configuration>
         <executions>
           <execution>
@@ -268,6 +257,14 @@
           </execution>
         </executions>
       </plugin>
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>exec-maven-plugin</artifactId>
+        <version>1.2.1</version>
+        <configuration>
+          <mainClass>io.angstrom.hiveworker.Server</mainClass>
+        </configuration>
+      </plugin>
 
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
@@ -279,7 +276,7 @@
           </descriptorRefs>
           <archive>
             <manifest>
-              <mainClass>io.angstrom.hiveworker.Main</mainClass>
+              <mainClass>io.angstrom.hiveworker.Server</mainClass>
             </manifest>
           </archive>
         </configuration>
@@ -378,55 +375,5 @@
       </build>
     </profile>
     <!-- END GPG JAR SIGNING -->
-    <profile>
-      <id>debug</id>
-      <build>
-        <plugins>
-          <plugin>
-            <groupId>net.alchim31.maven</groupId>
-            <artifactId>scala-maven-plugin</artifactId>
-            <version>3.1.0</version>
-            <configuration>
-              <recompileMode>incremental</recompileMode>
-              <args>
-                <arg>-unchecked</arg>
-                <arg>-deprecation</arg>
-                <arg>-explaintypes</arg>
-              </args>
-              <launchers>
-                <launcher>
-                  <id>main</id>
-                  <mainClass>io.angstrom.hiveworker.Main</mainClass>
-                  <jvmArgs>
-                    <jvmArg>-Xdebug</jvmArg>
-                    <jvmArg>-Xrunjdwp:transport=dt_socket,server=y,suspend=n,address=5005</jvmArg>
-                  </jvmArgs>
-                  <Args>
-                    <Arg>-f</Arg>
-                    <Arg>${project.basedir}/src/main/resources/config.scala</Arg>
-                  </Args>
-                </launcher>
-                <!-- you could define other launcher -->
-              </launchers>
-            </configuration>
-            <executions>
-              <execution>
-                <goals>
-                  <goal>compile</goal>
-                  <goal>testCompile</goal>
-                </goals>
-                <configuration>
-                  <args>
-                    <arg>-make:transitive</arg>
-                    <arg>-dependencyfile</arg>
-                    <arg>${project.build.directory}/.scala_dependencies</arg>
-                  </args>
-                </configuration>
-              </execution>
-            </executions>
-          </plugin>
-        </plugins>
-      </build>
-    </profile>
   </profiles>
 </project>

@@ -1,65 +1,46 @@
 package io.angstrom.hiveworker
 
-import com.twitter.conversions.time._
-import com.twitter.finagle.Service
-import com.twitter.finagle.builder.{ServerBuilder, Server => FinagleServer}
-import com.twitter.finagle.http.{Http, RichHttp, Response, Request}
-import com.twitter.finagle.stats.OstrichStatsReceiver
-import com.twitter.logging.Logger
-import com.twitter.ostrich.admin.{Service => OstrichService}
-import io.angstrom.hiveworker.configuration.ServicesConfiguration
+import com.twitter.app._
+import com.twitter.finagle.{Http, Service}
+import com.twitter.logging.{ConsoleHandler, LoggerFactory, Logger}
+import com.twitter.util.Await
+import io.angstrom.hiveworker.configuration.{HiveEnvironmentConfig, ServicesConfiguration}
 import io.angstrom.hiveworker.filters.HandleExceptionsFilter
 import io.angstrom.hiveworker.service.impl.HiveWorkerServiceImpl
-import java.net.InetSocketAddress
+import org.jboss.netty.handler.codec.http._
 import org.springframework.context.ApplicationContext
 import org.springframework.scala.context.function.FunctionalConfigApplicationContext
 
-class Server(config: Config) extends OstrichService {
-  require(config != null, "Config must be specified")
+object Server extends App {
 
-  val port = config.port.value
-  val name = config.name.value
-  val hiveEnvironmentConfig = config.hiveEnvironmentConfig.value
+  val port = flag("port", 8080, "Port")
+  val contextPropertiesPath = flag("configuration", "", "Path to context properties file.")
+  val jobFile = flag("jobs", "", "Path to job configurations")
+  val hiveEnvironmentConfig = HiveEnvironmentConfig(
+    hadoopVersion= "0.20.205",
+    amiVersion = "2.0.4",
+    hiveVersion = "0.7.1.3",
+    nodeHeapSize = "2048"
+  )
+  val loggerFactory = LoggerFactory(
+    node = "",
+    level = Some(Logger.INFO),
+    handlers = List(ConsoleHandler())
+  )
 
   val log = Logger.get(getClass)
 
-  var server: Option[FinagleServer] = None
   var context: Option[ApplicationContext] = None
-
   // Don't initialize until after mixed in by another class
   lazy val handleExceptions = new HandleExceptionsFilter
   lazy val respond = new HiveWorkerServiceImpl(context, Some(hiveEnvironmentConfig()))
-  lazy val service: Service[Request, Response] = handleExceptions andThen respond
+  lazy val service: Service[HttpRequest, HttpResponse] = handleExceptions andThen respond
 
-  lazy val serverSpec = ServerBuilder()
-    .codec(RichHttp[Request](Http()))
-    .bindTo(new InetSocketAddress(port))
-    .name(name)
-    .reportTo(new OstrichStatsReceiver)
-
-  override def start() {
+  def main() {
+    // set the System property
+    System.setProperty("hiveworker.configuration", contextPropertiesPath.apply())
     context = Some(FunctionalConfigApplicationContext(classOf[ServicesConfiguration]))
-
-    server = Some(serverSpec.build(service))
-  }
-
-  override def shutdown() {
-    log.debug("Shutdown requested")
-    server match {
-      case None =>
-        log.warning("Server not started, refusing to shutdown")
-      case Some(server) =>
-        try {
-          server.close(0.seconds)
-          log.info("Shutdown complete")
-        } catch {
-          case e: Exception =>
-            log.error(e, "Error shutting down server %s listening on port %d", name, port)
-        }
-    } // server match
-  }
-
-  override def reload() {
-    log.info("Reload requested, doing nothing but I could re-read the config or something")
+    val server = Http.serve(":%s".format(port.apply()), service)
+    Await.ready(server)
   }
 }
