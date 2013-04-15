@@ -12,7 +12,8 @@ import org.springframework.context.ApplicationContext
 
 class HiveWorkerServiceImpl(
   contextOption: Option[ApplicationContext],
-  hiveEnvironment: Option[HiveEnvironment]
+  hiveEnvironment: Option[HiveEnvironment],
+  jobConfigurationFile: Option[String]
 ) extends Service[HttpRequest, HttpResponse] with HiveWorkerService {
   lazy val notificationService: Option[NotificationService] =
     contextOption map { _.getBean("notificationService").asInstanceOf[NotificationService] }

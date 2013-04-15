@@ -1,7 +1,7 @@
 package io.angstrom.hiveworker.service.impl
 
 import com.amazonaws.services.sqs.AmazonSQS
-import com.amazonaws.services.sqs.model.SendMessageRequest
+import com.amazonaws.services.sqs.model.{DeleteMessageRequest, SendMessageRequest}
 import com.twitter.logging.Logger
 import io.angstrom.hiveworker.service.api.QueueService
 
@@ -29,5 +29,15 @@ class QueueServiceImpl(
     }
   }
 
-  def deleteMessage(receiptHandle: String) {}
+  def deleteMessage(receiptHandle: String) {
+    val request = new DeleteMessageRequest().
+      withQueueUrl(this.getQueueUrl).
+      withReceiptHandle(receiptHandle)
+    try {
+      amazonSQSClient.deleteMessage(request)
+    } catch {
+      case e: Exception =>
+        log.error(e, e.getMessage)
+    }
+  }
 }

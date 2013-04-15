@@ -33,7 +33,7 @@ object Server extends App {
   var context: Option[ApplicationContext] = None
   // Don't initialize until after mixed in by another class
   lazy val handleExceptions = new HandleExceptionsFilter
-  lazy val respond = new HiveWorkerServiceImpl(context, Some(hiveEnvironmentConfig()))
+  lazy val respond = new HiveWorkerServiceImpl(context, Some(hiveEnvironmentConfig()), jobFile.get)
   lazy val service: Service[HttpRequest, HttpResponse] = handleExceptions andThen respond
 
   def main() {
