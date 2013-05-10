@@ -115,6 +115,11 @@
     </dependency>
     <dependency>
       <groupId>com.twitter</groupId>
+      <artifactId>twitter-server</artifactId>
+      <version>1.0.1-SNAPSHOT</version>
+    </dependency>
+    <dependency>
+      <groupId>com.twitter</groupId>
       <artifactId>util-eval_2.10</artifactId>
       <version>6.2.4</version>
     </dependency>
