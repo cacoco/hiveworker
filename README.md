@@ -27,5 +27,5 @@ hiveworker uses [Finagle](https://github.com/twitter/finagle) as a server stack.
 To run:
 
 ```
-mvn exec:java -Dexec.args="-port=9090 -configuration=file:///path/to/hiveworker.properties"
+mvn exec:java -Dexec.args="-configuration=file:/path/to/hiveworker.properties""
 ```
