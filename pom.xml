@@ -28,7 +28,7 @@
     <encoding>UTF-8</encoding>
     <scala.version>2.10.1</scala.version>
     <spring.version>3.2.2.RELEASE</spring.version>
-    <finagle.version>6.2.1</finagle.version>
+    <finagle.version>6.3.0</finagle.version>
     <aws.jdk.version>1.4.1</aws.jdk.version>
   </properties>
 
@@ -106,22 +106,52 @@
       <groupId>com.twitter</groupId>
       <artifactId>finagle-ostrich4_2.10</artifactId>
       <version>${finagle.version}</version>
-      <exclusions>
-        <exclusion>
-          <groupId>com.twitter</groupId>
-          <artifactId>util-eval_2.10</artifactId>
-        </exclusion>
-      </exclusions>
     </dependency>
+
+   <!-- Twitter Server -->
     <dependency>
       <groupId>com.twitter</groupId>
       <artifactId>twitter-server</artifactId>
       <version>1.0.1-SNAPSHOT</version>
+      <exclusions>
+        <exclusion>
+          <artifactId>com.fasterxml.jackson.module</artifactId>
+          <groupId>jackson-module-scala_2.9.2</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>com.twitter</artifactId>
+          <groupId>finagle-http</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>com.twitter</artifactId>
+          <groupId>finagle-stats</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>com.twitter</artifactId>
+          <groupId>finagle-thrift</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>com.twitter</artifactId>
+          <groupId>finagle-mdns</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>com.twitter</artifactId>
+          <groupId>util-app</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>com.twitter</artifactId>
+          <groupId>util-logging</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>com.twitter</artifactId>
+          <groupId>util-jvm</groupId>
+        </exclusion>
+      </exclusions>
     </dependency>
     <dependency>
-      <groupId>com.twitter</groupId>
-      <artifactId>util-eval_2.10</artifactId>
-      <version>6.2.4</version>
+      <groupId>com.fasterxml.jackson.module</groupId>
+      <artifactId>jackson-module-scala_2.10</artifactId>
+      <version>2.1.3</version>
     </dependency>
 
     <dependency>
@@ -156,7 +186,7 @@
       <version>1.0.0.BUILD-SNAPSHOT</version>
     </dependency>
 
-    <!-- test -->
+    <!-- Test -->
     <dependency>
       <groupId>org.scalatest</groupId>
       <artifactId>scalatest_2.10</artifactId>
@@ -222,8 +252,8 @@
                 </tstamp>
                 <!-- put the version file -->
                 <echo message="The build id is: ${project.version}-${git.revision}-${build.time}" />
-                <echo file="${project.build.directory}/classes/version.properties">
-                  io.angstrom.hiveworker.build.version=${project.version}${line.separator}io.angstrom.hiveworker.build.timestamp=${build.time}${line.separator}io.angstrom.hiveworker.build.revision=${git.revision}
+                <echo file="${project.build.outputDirectory}/io/angstrom/hiveworker/version.properties">
+                  build.version=${project.version}${line.separator}build.timestamp=${build.time}${line.separator}build.revision=${git.revision}
                 </echo>
               </tasks>
             </configuration>
@@ -271,29 +301,29 @@
         </configuration>
       </plugin>
 
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-assembly-plugin</artifactId>
-        <version>2.2-beta-5</version>
-        <configuration>
-          <descriptorRefs>
-            <descriptorRef>jar-with-dependencies</descriptorRef>
-          </descriptorRefs>
-          <archive>
-            <manifest>
-              <mainClass>io.angstrom.hiveworker.Server</mainClass>
-            </manifest>
-          </archive>
-        </configuration>
-        <executions>
-          <execution>
-            <phase>package</phase>
-            <goals>
-              <goal>single</goal>
-            </goals>
-          </execution>
-        </executions>
-      </plugin>
+      <!--<plugin>-->
+        <!--<groupId>org.apache.maven.plugins</groupId>-->
+        <!--<artifactId>maven-assembly-plugin</artifactId>-->
+        <!--<version>2.2-beta-5</version>-->
+        <!--<configuration>-->
+          <!--<descriptorRefs>-->
+            <!--<descriptorRef>jar-with-dependencies</descriptorRef>-->
+          <!--</descriptorRefs>-->
+          <!--<archive>-->
+            <!--<manifest>-->
+              <!--<mainClass>io.angstrom.hiveworker.Server</mainClass>-->
+            <!--</manifest>-->
+          <!--</archive>-->
+        <!--</configuration>-->
+        <!--<executions>-->
+          <!--<execution>-->
+            <!--<phase>package</phase>-->
+            <!--<goals>-->
+              <!--<goal>single</goal>-->
+            <!--</goals>-->
+          <!--</execution>-->
+        <!--</executions>-->
+      <!--</plugin>-->
 
     <!-- disable surefire -->
     <plugin>
@@ -339,6 +369,25 @@
       <groupId>org.apache.maven.plugins</groupId>
       <artifactId>maven-release-plugin</artifactId>
       <version>2.3.2</version>
+    </plugin>
+
+    <plugin>
+      <groupId>org.codehaus.mojo</groupId>
+      <artifactId>properties-maven-plugin</artifactId>
+      <version>1.0-alpha-2</version>
+      <executions>
+        <execution>
+          <phase>generate-resources</phase>
+          <goals>
+            <goal>write-project-properties</goal>
+          </goals>
+          <configuration>
+            <outputFile>
+              ${project.build.outputDirectory}/io/angstrom/hiveworker/build.properties
+            </outputFile>
+          </configuration>
+        </execution>
+      </executions>
     </plugin>
 
   </plugins>

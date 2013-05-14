@@ -1,7 +1,7 @@
 package io.angstrom.hiveworker.util
 
-import java.util.Properties
 import com.twitter.logging.Logger
+import java.util.Properties
 
 object Version {
   val log = Logger.get(getClass)
@@ -15,9 +15,9 @@ object Version {
     val properties = new Properties
     properties.load(inputStream)
 
-    version = properties.getProperty("io.angstrom.hiveworker.build.version")
-    build = properties.getProperty("io.angstrom.hiveworker.build.revision")
-    timestamp = properties.getProperty("io.angstrom.hiveworker.build.timestamp")
+    version = properties.getProperty("build.version")
+    build = properties.getProperty("build.revision")
+    timestamp = properties.getProperty("build.timestamp")
   } finally {
     inputStream.close()
   }

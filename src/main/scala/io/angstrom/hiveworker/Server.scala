@@ -1,6 +1,9 @@
 package io.angstrom.hiveworker
 
-import com.twitter.finagle.{Http, Service}
+import com.twitter.finagle.Service
+import com.twitter.finagle.http.HttpMuxer
+import com.twitter.logging.Level
+import com.twitter.server.TwitterServer
 import com.twitter.util.Await
 import io.angstrom.hiveworker.configuration.{HiveEnvironmentConfig, ServicesConfiguration}
 import io.angstrom.hiveworker.filters.HandleExceptionsFilter
@@ -8,16 +11,13 @@ import io.angstrom.hiveworker.service.impl.HiveWorkerServiceImpl
 import org.jboss.netty.handler.codec.http._
 import org.springframework.context.ApplicationContext
 import org.springframework.scala.context.function.FunctionalConfigApplicationContext
-import com.twitter.server.TwitterServer
-import com.twitter.logging.Level
 
 object Server extends TwitterServer {
   override def defaultLogLevel: Level = Level.DEBUG
 
-  val port = flag("port", 8080, "Port")
   val contextPropertiesPath = flag("configuration", "hiveworker.properties", "Path to context properties file.")
-  // set the System property
-  System.setProperty("hiveworker.configuration", contextPropertiesPath.apply())
+  println(contextPropertiesPath.apply())
+
   val jobFile = flag("jobs", "", "Path to job configurations")
   val hiveEnvironmentConfig = HiveEnvironmentConfig(
     hadoopVersion= "0.20.205",
@@ -33,7 +33,9 @@ object Server extends TwitterServer {
   lazy val service: Service[HttpRequest, HttpResponse] = handleExceptions andThen respond
 
   def main() {
-    val server = Http.serve(":%s".format(port.apply()), service)
-    Await.ready(server)
+    // set the System property
+    System.setProperty("hiveworker.configuration", contextPropertiesPath.apply())
+    HttpMuxer.addHandler("/", service)
+    Await.ready(httpServer)
   }
 }

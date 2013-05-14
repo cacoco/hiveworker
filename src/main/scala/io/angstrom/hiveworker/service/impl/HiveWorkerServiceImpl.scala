@@ -1,6 +1,5 @@
 package io.angstrom.hiveworker.service.impl
 
-import com.twitter.finagle.Service
 import com.twitter.util.Future
 import io.angstrom.hiveworker.HiveEnvironment
 import io.angstrom.hiveworker.service.api.{QueueService, JobFlowService, NotificationService, HiveWorkerService}
@@ -14,7 +13,7 @@ class HiveWorkerServiceImpl(
   contextOption: Option[ApplicationContext],
   hiveEnvironment: Option[HiveEnvironment],
   jobConfigurationFile: Option[String]
-) extends Service[HttpRequest, HttpResponse] with HiveWorkerService {
+) extends HiveWorkerService {
   lazy val notificationService: Option[NotificationService] =
     contextOption map { _.getBean("notificationService").asInstanceOf[NotificationService] }
 
