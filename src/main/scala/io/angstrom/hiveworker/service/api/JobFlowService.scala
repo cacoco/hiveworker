@@ -15,8 +15,8 @@ trait JobFlowService {
   def describeJobFlow(jobFlowId: String): Future[Try[JobFlowDetail]]
 
   def describeJobFlows(
-    createdAfter: Date,
-    createdBefore: Date,
+    createdAfter: Option[Date],
+    createdBefore: Option[Date],
     jobFlowIds: Seq[String],
     jobFlowStates: String*
   ): Future[Try[Seq[JobFlowDetail]]]

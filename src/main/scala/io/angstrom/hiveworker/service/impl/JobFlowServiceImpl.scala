@@ -145,16 +145,16 @@ class JobFlowServiceImpl(
   }
 
   def describeJobFlows(
-    createdAfter: Date,
-    createdBefore: Date,
+    createdAfter: Option[Date],
+    createdBefore: Option[Date],
     jobFlowIds: Seq[String],
     jobFlowStates: String*
   ): Future[Try[Seq[JobFlowDetail]]] = {
     val request = new DescribeJobFlowsRequest().
-      withCreatedAfter(createdAfter).
-      withCreatedBefore(createdBefore).
       withJobFlowIds(jobFlowIds.asJavaCollection).
       withJobFlowStates(jobFlowStates: _*)
+    createdAfter map { request.withCreatedAfter(_) }
+    createdBefore map { request.withCreatedBefore(_) }
     future {
       for (describeResult <- Try(elasticMapReduceClient.describeJobFlows(request)))
         yield describeResult.getJobFlows.asScala.toSeq
