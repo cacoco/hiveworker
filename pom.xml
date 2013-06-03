@@ -33,19 +33,19 @@
   </properties>
 
   <!-- REPOSITORIES -->
-
   <repositories>
-
     <repository>
       <id>Sonatype Snapshots</id>
       <url>https://oss.sonatype.org/content/repositories/snapshots/</url>
     </repository>
-
     <repository>
       <id>Sonatype Releases</id>
       <url>https://oss.sonatype.org/content/repositories/releases/</url>
     </repository>
-
+    <repository>
+      <id>Twitter</id>
+      <url>http://maven.twttr.com</url>
+    </repository>
   </repositories>
 
   <pluginRepositories>
@@ -112,11 +112,6 @@
       <artifactId>finagle-http_2.10</artifactId>
       <version>${finagle.version}</version>
     </dependency>
-    <dependency>
-      <groupId>com.twitter</groupId>
-      <artifactId>finagle-ostrich4_2.10</artifactId>
-      <version>${finagle.version}</version>
-    </dependency>
 
     <!-- Ostrich -->
     <dependency>
@@ -128,8 +123,8 @@
     <!-- Twitter Server -->
     <dependency>
       <groupId>com.twitter</groupId>
-      <artifactId>twitter-server</artifactId>
-      <version>1.0.1-SNAPSHOT</version>
+      <artifactId>twitter-server_2.9.2</artifactId>
+      <version>1.0.1</version>
       <exclusions>
         <exclusion>
           <groupId>com.fasterxml.jackson.module</groupId>

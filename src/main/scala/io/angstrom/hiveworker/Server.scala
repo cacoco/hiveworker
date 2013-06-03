@@ -1,10 +1,8 @@
 package io.angstrom.hiveworker
 
-import com.twitter.app.App
 import com.twitter.finagle.Service
 import com.twitter.finagle.http.HttpMuxer
-import com.twitter.logging.Logging
-import com.twitter.server.{HttpServer, Admin}
+import com.twitter.server.TwitterServer
 import com.twitter.util.Await
 import io.angstrom.hiveworker.configuration.{HiveEnvironmentConfig, ServicesConfiguration}
 import io.angstrom.hiveworker.filters.HandleExceptionsFilter
@@ -13,10 +11,7 @@ import org.jboss.netty.handler.codec.http._
 import org.springframework.context.ApplicationContext
 import org.springframework.scala.context.function.FunctionalConfigApplicationContext
 
-object Server extends App
-  with Admin
-  with HttpServer
-  with Logging {
+object Server extends TwitterServer {
 
   val contextPropertiesPath = flag("configuration", "", "Path to context properties file.")
   val jobFile = flag("jobs", "", "Path to job configurations")

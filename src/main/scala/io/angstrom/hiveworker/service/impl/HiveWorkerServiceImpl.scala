@@ -1,6 +1,6 @@
 package io.angstrom.hiveworker.service.impl
 
-import com.twitter.server.JsonConverter
+import com.twitter.server.util.JsonConverter
 import com.twitter.util.Future
 import io.angstrom.hiveworker.HiveEnvironment
 import io.angstrom.hiveworker.service.api.{QueueService, JobFlowService, NotificationService, HiveWorkerService}
