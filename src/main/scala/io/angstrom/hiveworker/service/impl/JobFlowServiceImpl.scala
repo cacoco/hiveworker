@@ -5,7 +5,6 @@ import com.amazonaws.services.elasticmapreduce.model._
 import com.amazonaws.services.elasticmapreduce.util.StepFactory
 import com.twitter.logging.Logger
 import io.angstrom.hiveworker.service.api.{JobFlow, SubmitJobFlowResult, JobFlowService}
-import io.angstrom.hiveworker.util.Step
 import io.angstrom.hiveworker.{DefaultHiveEnvironment, HiveEnvironment}
 import java.util.Date
 import scala.collection.JavaConverters._
@@ -21,6 +20,8 @@ object JobFlowServiceImpl {
   val MessageKeyJobFlowId = "jobFlowId"
   val MessageKeyStartTime = "startTime"
   val MessageKeyAttempt = "attempt"
+
+  val Bucket = "bucket"
 }
 
 class JobFlowServiceImpl(
@@ -30,6 +31,9 @@ class JobFlowServiceImpl(
   val masterInstanceType: String,
   val slaveInstanceType: String
 ) extends JobFlowService {
+
+  import JobFlowServiceImpl._
+
   val log = Logger.get(getClass)
 
   private[this] var hiveEnvironmentOption: Option[HiveEnvironment] = None
@@ -41,7 +45,7 @@ class JobFlowServiceImpl(
   def submitJobFlow(attempt: Integer, jobFlow: JobFlow): Future[Try[SubmitJobFlowResult]] = {
     log.info("Creating job flow task for script: [%s], attempt: [%s]".format(jobFlow.script, attempt))
 
-    val maxAttempts: Integer = jobFlow.maxAttempts getOrElse 1
+    val maxAttempts: Int = jobFlow.maxAttempts getOrElse 1
     if (attempt > maxAttempts) {
       return Future(Failure(new Exception("Max attempts: %s exceeded.".format(maxAttempts))))
     }
@@ -96,7 +100,7 @@ class JobFlowServiceImpl(
       .withName(String.format("Run Hive Script"))
       .withActionOnFailure(ActionOnFailure.TERMINATE_JOB_FLOW) // TODO: is TERMINATE correct?
     // Make sure to add the bucket as an step argument
-    val arguments = jobFlowConfiguration.steps.foldLeft(List("-d", "%s=%s".format(Step.Bucket, bucket))) { (list, step) =>
+    val arguments = jobFlowConfiguration.steps.foldLeft(List("-d", "%s=%s".format(Bucket, bucket))) { (list, step) =>
       list ++ List("-d", "%s=%s".format(step.name, step.value))
     }
     __runHiveScript.withHadoopJarStep {
@@ -120,11 +124,12 @@ class JobFlowServiceImpl(
   }
 
   protected[this] def getJobFlowInstancesConfig(
-    instanceCountOverride: Option[Integer],
+    instanceCountOverride: Option[Int],
     hadoopVersion: String
   ): JobFlowInstancesConfig = {
+    val instances = instanceCountOverride getOrElse 1
     new JobFlowInstancesConfig().
-        withInstanceCount(instanceCountOverride getOrElse 1).
+        withInstanceCount(java.lang.Integer.valueOf(instances.toInt)).
         withHadoopVersion(hadoopVersion).
         withMasterInstanceType(masterInstanceType).
         withSlaveInstanceType(slaveInstanceType)

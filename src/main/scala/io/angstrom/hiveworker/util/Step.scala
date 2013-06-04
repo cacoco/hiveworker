@@ -1,25 +1,44 @@
 package io.angstrom.hiveworker.util
 
-import java.text.SimpleDateFormat
-import java.util.Date
+import org.joda.time.format.DateTimeFormat
+import org.joda.time.{DateTimeZone, DateTime}
+
+object StepArgument extends Enumeration {
+  type Argument = Value
+  val Hour, LastHour, Today, Yesterday, TwoDaysAgo, LastMonth = Value
+}
 
 object Step {
-  val format = """\$\{([a-zA-Z]+)\}""".r
+  val HourPattern = DateTimeFormat.forPattern("yyyy-MM-dd-HH")
+  val DayPattern = DateTimeFormat.forPattern("yyyy-MM-dd")
+  val MonthPattern = DateTimeFormat.forPattern("yyyy-MM")
 
-  val Bucket = "bucket"
+  import StepArgument._
 
-  def apply(name: String, value: String) {
-    if (value.startsWith("$")) {
-      // handle ${XX} values which are SimpleDateFormat patterns for datetimes
-      val parsedValue = value match {
-        case format(pattern) =>
-          val dateFormat = new SimpleDateFormat(pattern)
-          dateFormat.format(new Date())
-      }
-      new Step(name, parsedValue)
-    } else {
-      new Step(name, value)
+  def apply(name: String, value: Any): Step = {
+    val now = DateTime.now(DateTimeZone.UTC)
+    val v = value match {
+      case s: String => s
+      case a: Argument =>
+        a match {
+          case Hour =>
+            HourPattern.print(now)
+          case LastHour =>
+            HourPattern.print(now.minusHours(1))
+          case Today =>
+            DayPattern.print(now)
+          case Yesterday =>
+            DayPattern.print(now.minusDays(1))
+          case TwoDaysAgo =>
+            DayPattern.print(now.minusDays(2))
+          case LastMonth =>
+            MonthPattern.print(now.minusMonths(1))
+          case _ => throw new IllegalArgumentException
+        }
+      case _ => throw new IllegalArgumentException
     }
+
+    new Step(name, v)
   }
 }
 

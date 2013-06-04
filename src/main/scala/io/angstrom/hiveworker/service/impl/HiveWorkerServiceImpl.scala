@@ -1,10 +1,11 @@
 package io.angstrom.hiveworker.service.impl
 
 import com.twitter.server.util.JsonConverter
-import com.twitter.util.Future
+import com.twitter.util.{Eval, Future}
 import io.angstrom.hiveworker.HiveEnvironment
-import io.angstrom.hiveworker.service.api.{QueueService, JobFlowService, NotificationService, HiveWorkerService}
+import io.angstrom.hiveworker.service.api._
 import io.angstrom.hiveworker.util.Version
+import java.io.File
 import org.jboss.netty.handler.codec.http._
 import org.springframework.context.ApplicationContext
 
@@ -37,6 +38,13 @@ class HiveWorkerServiceImpl(
 
     val hiveEnvironment =  jobFlowService flatMap { service =>
       service.hiveEnvironment
+    }
+
+    try {
+      val jobFlowConfiguration = (new Eval).apply[JobFlowConfiguration](new File(jobConfigurationFile.get))
+      println(jobFlowConfiguration())
+    } catch {
+      case e: Throwable => e.printStackTrace()
     }
 
     Future.value(JsonConverter(hiveEnvironment.get))
