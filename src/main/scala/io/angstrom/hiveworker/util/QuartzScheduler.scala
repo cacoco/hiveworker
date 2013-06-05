@@ -4,14 +4,15 @@ import com.twitter.logging.Logger
 import org.quartz.CronExpression
 import org.quartz.CronScheduleBuilder
 import org.quartz.Job
-import org.quartz.JobBuilder.newJob
+import org.quartz.JobBuilder._
 import org.quartz.JobExecutionContext
 import org.quartz.Scheduler
 import org.quartz.SimpleScheduleBuilder.simpleSchedule
-import org.quartz.TriggerBuilder.newTrigger
+import org.quartz.TriggerBuilder._
 import org.quartz.impl.StdSchedulerFactory
 import scala.concurrent.duration.Duration
 
+/** Based on https://github.com/mchv/play2-quartz */
 object QuartzScheduler {
   private val log = Logger(getClass.getSimpleName)
   private val scheduler = StdSchedulerFactory.getDefaultScheduler
