@@ -5,10 +5,12 @@ import com.twitter.logging.Logger
 import com.twitter.util.Future
 import io.angstrom.hiveworker.service.api.{JobFlowDetails, JobFlowService, QueueService, NotificationService}
 import io.angstrom.hiveworker.util.JsonConverter
+import java.util.Date
 import org.jboss.netty.handler.codec.http._
 import org.springframework.context.ApplicationContext
+import scala.concurrent.Await
 import scala.concurrent.ExecutionContext.Implicits.global
-import scala.concurrent.{Await, future}
+import scala.util.{Success, Failure}
 
 object MainController {
   val routes = Set(
@@ -41,18 +43,17 @@ class MainController(applicationContext: Option[ApplicationContext])
       case "/status" =>
         jobFlowService match {
           case Some(service) =>
-//            val futureTry = service.describeJobFlows(createdBefore = Some(new Date())) map { result =>
-//              result match {
-//                case Success(v) ⇒
-//                  JobFlowDetails(v)
-//                case Failure(e) ⇒
-//                  log.error(e, e.getMessage)
-//                  JobFlowDetails()
-//              }
-//            }
-            val futureTry = future { JobFlowDetails() }
+            val futureTry = service.describeJobFlows(createdBefore = Some(new Date())) map { result =>
+              result match {
+                case Success(v) ⇒
+                  JobFlowDetails(v)
+                case Failure(e) ⇒
+                  log.error(e, e.getMessage)
+                  JobFlowDetails()
+              }
+            }
             // TODO: convert Scala Future to Twitter Future correctly
-            val details = Await.result[JobFlowDetails](futureTry, 30.seconds)
+            val details: Map[String, Any] = Map("status" -> Await.result[JobFlowDetails](futureTry, 30.seconds))
             Future.value(JsonConverter(details))
           case _ =>
             Future.value(new DefaultHttpResponse(HttpVersion.HTTP_1_1, HttpResponseStatus.INTERNAL_SERVER_ERROR))

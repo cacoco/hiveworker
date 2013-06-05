@@ -26,6 +26,7 @@
     <maven.compiler.source>1.6</maven.compiler.source>
     <maven.compiler.target>1.6</maven.compiler.target>
     <encoding>UTF-8</encoding>
+    <slf4j.version>1.7.5</slf4j.version>
     <scala.version>2.10.1</scala.version>
     <spring.version>3.2.2.RELEASE</spring.version>
     <aws.jdk.version>1.4.1</aws.jdk.version>
@@ -90,6 +91,21 @@
   </distributionManagement>
   <dependencies>
 
+    <!-- SLF4J -->
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-simple</artifactId>
+      <version>${slf4j.version}</version>
+    </dependency>
+    <!-- Binding for slf4j through commons logging since this
+         is what twitter-server uses, but Quartz uses slf4j -->
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-jcl</artifactId>
+      <version>${slf4j.version}</version>
+      <scope>runtime</scope>
+    </dependency>
+
     <!-- Scala Lib -->
     <dependency>
       <groupId>org.scala-lang</groupId>
@@ -122,7 +138,6 @@
       <artifactId>quartz</artifactId>
       <version>2.1.7</version>
     </dependency>
-
 
     <!-- Twitter Server -->
     <dependency>
@@ -175,6 +190,12 @@
       <groupId>org.scalatest</groupId>
       <artifactId>scalatest_2.10</artifactId>
       <version>1.9.1</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-nop</artifactId>
+      <version>${slf4j.version}</version>
       <scope>test</scope>
     </dependency>
     <dependency>

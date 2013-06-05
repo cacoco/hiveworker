@@ -6,14 +6,13 @@ import com.twitter.util.Await
 import io.angstrom.hiveworker.configuration.ServicesConfiguration
 import io.angstrom.hiveworker.controller.{JobsController, MainController}
 import io.angstrom.hiveworker.filters.HandleExceptionsFilter
-import org.quartz.Scheduler
-import org.quartz.impl.StdSchedulerFactory
+import io.angstrom.hiveworker.processor.{DailyProcessor, HourlyProcessor}
+import io.angstrom.hiveworker.util.QuartzScheduler
 import org.springframework.context.ApplicationContext
 import org.springframework.scala.context.function.FunctionalConfigApplicationContext
 
 object Server extends TwitterServer {
-
-  val contextPropertiesPath = flag("configuration", "", "Path to context properties file.")
+  val contextPropertiesPath = flag("configuration", "file://./config/hiveworker.properties", "Path to context properties file.")
 
   lazy val context: Option[ApplicationContext] = Some(FunctionalConfigApplicationContext(classOf[ServicesConfiguration]))
   lazy val handleExceptions = new HandleExceptionsFilter
@@ -27,13 +26,16 @@ object Server extends TwitterServer {
       HttpMuxer.addHandler(route, service)
     }
 
-    // Grab the Quatrz Scheduler instance from the Factory
-    val scheduler: Scheduler = StdSchedulerFactory.getDefaultScheduler
-    // and start it off
-    scheduler.start();
+    QuartzScheduler.start()
+
+    // Create jobs
+//    QuartzScheduler.schedule("hourly", new HourlyProcessor(context)) at "0 0 0/1 1/1 * ? *"
+//    QuartzScheduler.schedule("daily", new DailyProcessor(context)) at "0 0 12 1/1 * ? *"
+    QuartzScheduler.schedule("hourly", new HourlyProcessor(context)) at "0 * * * * ? *"
+    QuartzScheduler.schedule("daily", new DailyProcessor(context)) at "0 * * * * ? *"
 
     onExit {
-      scheduler.shutdown()
+      QuartzScheduler.stop()
       httpServer.close()
     }
     Await.ready(httpServer)

@@ -15,7 +15,8 @@ class JobsController(applicationContext: Option[ApplicationContext]) extends Ser
   def apply(request: HttpRequest): Future[HttpResponse] = {
     jobFlowConfiguration match {
       case Some(config) =>
-        Future.value(JsonConverter(config()))
+        val jobs: Map[String, Any] = Map("jobs" -> config())
+        Future.value(JsonConverter(jobs))
       case _ =>
         Future.value(new DefaultHttpResponse(HttpVersion.HTTP_1_1, HttpResponseStatus.INTERNAL_SERVER_ERROR))
     }

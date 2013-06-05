@@ -4,12 +4,13 @@ import com.twitter.logging.Logger
 import io.angstrom.hiveworker.service.api.{JobFlowDetails, JobFlowService, JobFlowConfiguration}
 import io.angstrom.hiveworker.util.JobType
 import java.util.Date
+import org.quartz.JobExecutionContext
 import org.springframework.context.ApplicationContext
 import scala.concurrent.Await
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.util.{Failure, Success}
 
-abstract class JobProcessor(applicationContext: Option[ApplicationContext]) {
+abstract class JobProcessor(applicationContext: Option[ApplicationContext]) extends (JobExecutionContext => Unit) {
 
   lazy val log = Logger(getClass.getSimpleName)
 
@@ -20,7 +21,11 @@ abstract class JobProcessor(applicationContext: Option[ApplicationContext]) {
 
   def jobType: JobType
 
-  def execute() {
+  def apply(context: JobExecutionContext) {
+    execute()
+  }
+
+  protected[this] def execute() {
     import scala.concurrent.duration._
 
     for {config <- jobFlowConfiguration
@@ -42,10 +47,12 @@ abstract class JobProcessor(applicationContext: Option[ApplicationContext]) {
       val createdJobs = jobDetails.details map { detail => detail.getName }
       // check to see if we've created this job before -- TODO: look at the state detail to determine most recent execution state.
       val jobsToCreate = jobs filterNot { createdJobs contains _.canonicalName }
+      log.info("Jobs to create: ")
+      log.info("", jobsToCreate)
 
-      for (job <- jobsToCreate) {
-        service.submitJobFlow(1, job)
-      }
+//      for (job <- jobsToCreate) {
+//        service.submitJobFlow(1, job)
+//      }
     }
   }
 
