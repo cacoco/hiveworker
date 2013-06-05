@@ -1,9 +1,9 @@
 package io.angstrom.hiveworker.controller
 
 import com.twitter.finagle.Service
-import com.twitter.server.util.JsonConverter
 import com.twitter.util.Future
 import io.angstrom.hiveworker.service.api.JobFlowConfiguration
+import io.angstrom.hiveworker.util.JsonConverter
 import org.jboss.netty.handler.codec.http._
 import org.springframework.context.ApplicationContext
 
