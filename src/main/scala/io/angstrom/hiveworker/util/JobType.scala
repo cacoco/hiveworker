@@ -1,6 +1,8 @@
 package io.angstrom.hiveworker.util
 
-object JobType extends Enumeration {
-  type JobType = Value
-  val HOURLY, DAILY = Value
+abstract sealed class JobType(val s: String)
+
+object JobType {
+  case object HOURLY extends JobType("hourly")
+  case object DAILY extends JobType("daily")
 }

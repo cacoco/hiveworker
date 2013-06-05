@@ -12,7 +12,6 @@ import org.springframework.scala.context.function.FunctionalConfigApplicationCon
 object Server extends TwitterServer {
 
   val contextPropertiesPath = flag("configuration", "", "Path to context properties file.")
-  val jobFile = flag("jobs", "", "Path to job configurations")
 
   lazy val context: Option[ApplicationContext] = Some(FunctionalConfigApplicationContext(classOf[ServicesConfiguration]))
   lazy val handleExceptions = new HandleExceptionsFilter
@@ -20,7 +19,7 @@ object Server extends TwitterServer {
   def main() {
     System.setProperty("hiveworker.configuration", contextPropertiesPath.apply())
 
-    HttpMuxer.addHandler("/jobs", (handleExceptions andThen new JobsController(context, jobFile.get)))
+    HttpMuxer.addHandler("/jobs", (handleExceptions andThen new JobsController(context)))
     val service = handleExceptions andThen new MainController(context)
     for (route <- MainController.routes) {
       HttpMuxer.addHandler(route, service)

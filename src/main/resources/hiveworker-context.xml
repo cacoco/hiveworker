@@ -49,6 +49,10 @@
     <constructor-arg index="3" name= "nodeHeapSize" value="2048" type="java.lang.String" />
   </bean>
 
+  <bean id="jobConfigurationFile" class="java.lang.String">
+    <constructor-arg value="${jobs.configuration.file}" />
+  </bean>
+
   <bean id="bucket" class="java.lang.String">
     <constructor-arg value="${hadoop.bucket}"/>
   </bean>

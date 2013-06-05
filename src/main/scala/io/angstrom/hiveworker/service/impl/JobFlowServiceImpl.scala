@@ -63,11 +63,7 @@ class JobFlowServiceImpl(
   protected[this] def createJobFlowRequest(jobFlowConfiguration: JobFlow): RunJobFlowRequest = {
     val hiveEnvironment = hiveEnvironmentOption getOrElse DefaultHiveEnvironment
 
-    val name = jobFlowConfiguration.name getOrElse {
-        // use script name with a timestamp
-        val script = jobFlowConfiguration.script.replaceAll(".q", "")
-        "%s %s".format(script, System.currentTimeMillis())
-    }
+    val name = jobFlowConfiguration.canonicalName
 
     val __configureDaemons = new BootstrapActionConfig()
     __configureDaemons.setName("configure_daemons_bootstrap_action")
@@ -145,7 +141,7 @@ class JobFlowServiceImpl(
       withJobFlowIds(Seq(jobFlowId).asJavaCollection)
     future {
       for (describeResult <- Try(elasticMapReduceClient.describeJobFlows(request)))
-        yield describeResult.getJobFlows.get(0) // pop off first (and only) result.s
+        yield describeResult.getJobFlows.get(0) // pop off first (and only) result.
     }
   }
 

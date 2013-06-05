@@ -275,8 +275,8 @@
         <configuration>
           <mainClass>io.angstrom.hiveworker.Server</mainClass>
           <arguments>
+            <argument>-log.level=DEBUG</argument>
             <argument>-configuration=file:${project.basedir}/config/hiveworker.properties </argument>
-            <argument>-jobs=${project.basedir}/config/example_config.scala</argument>
           </arguments>
         </configuration>
       </plugin>

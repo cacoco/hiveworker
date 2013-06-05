@@ -4,11 +4,14 @@ import org.joda.time.format.DateTimeFormat
 import org.joda.time.{DateTimeZone, DateTime}
 
 object StepArgument extends Enumeration {
-  type Argument = Value
+  type StepArgument = Value
   val Hour, LastHour, Today, Yesterday, TwoDaysAgo, LastMonth = Value
 }
 
 object Step {
+
+  import StepArgument._
+
   val HourPattern = DateTimeFormat.forPattern("yyyy-MM-dd-HH")
   val DayPattern = DateTimeFormat.forPattern("yyyy-MM-dd")
   val MonthPattern = DateTimeFormat.forPattern("yyyy-MM")
@@ -18,7 +21,7 @@ object Step {
     val now = DateTime.now(DateTimeZone.UTC)
     val v = value match {
       case s: String => s
-      case a: Argument =>
+      case a: StepArgument =>
         a match {
           case Hour =>
             HourPattern.print(now)
