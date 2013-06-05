@@ -42,4 +42,4 @@ object Step {
   }
 }
 
-class Step(val name: String, val value: String)
+protected[hiveworker] class Step(val name: String, val value: String)

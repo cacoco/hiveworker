@@ -3,6 +3,8 @@
 
 hiveworker is a Scala library to run [Hive](http://hive.apache.org/) job flows on the [Amazon Elastic MapReduce](http://aws.amazon.com/elasticmapreduce/) platform using the [AWS Java SDK](http://docs.amazonwebservices.com/AWSJavaSDK/latest/javadoc/index.html).
 
+NOTE: this library is still in-progress
+
 ## Install ######################################################################
 
 ```
@@ -27,5 +29,5 @@ hiveworker uses [Finagle](https://github.com/twitter/finagle) as a server stack.
 To run:
 
 ```
-mvn exec:java -Dexec.args="-configuration=file:/path/to/hiveworker.properties""
+mvn exec:java -Dexec.args="-configuration=file:/path/to/hiveworker.properties -jobs=/path/to/job/configuration.scala"
 ```

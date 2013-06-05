@@ -153,8 +153,7 @@ class JobFlowServiceImpl(
     createdAfter: Option[Date],
     createdBefore: Option[Date],
     jobFlowIds: Seq[String],
-    jobFlowStates: String*
-  ): Future[Try[Seq[JobFlowDetail]]] = {
+    jobFlowStates: Seq[String]): Future[Try[Seq[JobFlowDetail]]] = {
     val request = new DescribeJobFlowsRequest().
       withJobFlowIds(jobFlowIds.asJavaCollection).
       withJobFlowStates(jobFlowStates: _*)

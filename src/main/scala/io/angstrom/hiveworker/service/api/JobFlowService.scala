@@ -15,10 +15,10 @@ trait JobFlowService {
   def describeJobFlow(jobFlowId: String): Future[Try[JobFlowDetail]]
 
   def describeJobFlows(
-    createdAfter: Option[Date],
-    createdBefore: Option[Date],
-    jobFlowIds: Seq[String],
-    jobFlowStates: String*
+    createdAfter: Option[Date] = None,
+    createdBefore: Option[Date] = None,
+    jobFlowIds: Seq[String] = Seq[String](),
+    jobFlowStates: Seq[String] = Seq[String]()
   ): Future[Try[Seq[JobFlowDetail]]]
 
   def terminateJobFlows(jobFlowId: String*)
