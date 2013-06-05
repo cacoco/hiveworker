@@ -13,7 +13,6 @@ object Step {
   val DayPattern = DateTimeFormat.forPattern("yyyy-MM-dd")
   val MonthPattern = DateTimeFormat.forPattern("yyyy-MM")
 
-  import StepArgument._
 
   def apply(name: String, value: Any): Step = {
     val now = DateTime.now(DateTimeZone.UTC)
