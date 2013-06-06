@@ -13,6 +13,7 @@ import org.springframework.scala.context.function.FunctionalConfigApplicationCon
 
 object Server extends TwitterServer {
   val contextPropertiesPath = flag("configuration", "file://./config/hiveworker.properties", "Path to context properties file.")
+  val dryRun = flag("dry-run", false, "Don't schedule jobs")
 
   lazy val context: Option[ApplicationContext] = Some(FunctionalConfigApplicationContext(classOf[ServicesConfiguration]))
   lazy val handleExceptions = new HandleExceptionsFilter
@@ -28,11 +29,13 @@ object Server extends TwitterServer {
 
     QuartzScheduler.start()
 
-    // Create jobs
-//    QuartzScheduler.schedule("hourly", new HourlyProcessor(context)) at "0 0 0/1 1/1 * ? *"
-//    QuartzScheduler.schedule("daily", new DailyProcessor(context)) at "0 0 12 1/1 * ? *"
-    QuartzScheduler.schedule("hourly", new HourlyProcessor(context)) at "0 * * * * ? *"
-    QuartzScheduler.schedule("daily", new DailyProcessor(context)) at "0 * * * * ? *"
+    if (dryRun()) {
+      log.info("Skipping job scheduling.  ")
+    } else {
+      // Create jobs
+      QuartzScheduler.schedule("hourly", new HourlyProcessor(context)) at "0 0 0/1 1/1 * ? *"
+      QuartzScheduler.schedule("daily", new DailyProcessor(context)) at "0 0 12 1/1 * ? *"
+    }
 
     onExit {
       QuartzScheduler.stop()

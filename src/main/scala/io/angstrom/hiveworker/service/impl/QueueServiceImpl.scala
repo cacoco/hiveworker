@@ -2,14 +2,11 @@ package io.angstrom.hiveworker.service.impl
 
 import com.amazonaws.services.sqs.AmazonSQS
 import com.amazonaws.services.sqs.model.{DeleteMessageRequest, SendMessageRequest}
-import com.twitter.logging.Logger
 import io.angstrom.hiveworker.service.api.QueueService
 
 class QueueServiceImpl(
   val amazonSQSClient: AmazonSQS,
-  val defaultQueueUrl: String
-) extends QueueService {
-  val log = Logger.get(getClass)
+  val defaultQueueUrl: String) extends QueueService {
 
   def getQueueUrl: String = defaultQueueUrl
 

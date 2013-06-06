@@ -3,9 +3,8 @@ package io.angstrom.hiveworker.service.impl
 import com.amazonaws.services.elasticmapreduce.AmazonElasticMapReduce
 import com.amazonaws.services.elasticmapreduce.model._
 import com.amazonaws.services.elasticmapreduce.util.StepFactory
-import com.twitter.logging.Logger
+import io.angstrom.hiveworker.HiveEnvironment
 import io.angstrom.hiveworker.service.api.{JobFlow, SubmitJobFlowResult, JobFlowService}
-import io.angstrom.hiveworker.{DefaultHiveEnvironment, HiveEnvironment}
 import java.util.Date
 import scala.collection.JavaConverters._
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -26,21 +25,13 @@ object JobFlowServiceImpl {
 
 class JobFlowServiceImpl(
   val elasticMapReduceClient: AmazonElasticMapReduce,
+  val hiveEnvironment: HiveEnvironment,
   val bucket: String,
   val logUri: String,
   val masterInstanceType: String,
-  val slaveInstanceType: String
-) extends JobFlowService {
+  val slaveInstanceType: String) extends JobFlowService {
 
   import JobFlowServiceImpl._
-
-  val log = Logger.get(getClass)
-
-  private[this] var hiveEnvironmentOption: Option[HiveEnvironment] = None
-  def hiveEnvironment: Option[HiveEnvironment] = hiveEnvironmentOption
-  def hiveEnvironment_= (hiveEnvironment: Option[HiveEnvironment]) {
-    this.hiveEnvironmentOption = hiveEnvironment
-  }
 
   def submitJobFlow(attempt: Integer, jobFlow: JobFlow): Future[Try[SubmitJobFlowResult]] = {
     log.info("Creating job flow task for script: [%s], attempt: [%s]".format(jobFlow.script, attempt))
@@ -61,8 +52,6 @@ class JobFlowServiceImpl(
   }
 
   protected[this] def createJobFlowRequest(jobFlowConfiguration: JobFlow): RunJobFlowRequest = {
-    val hiveEnvironment = hiveEnvironmentOption getOrElse DefaultHiveEnvironment
-
     val name = jobFlowConfiguration.canonicalName
 
     val __configureDaemons = new BootstrapActionConfig()

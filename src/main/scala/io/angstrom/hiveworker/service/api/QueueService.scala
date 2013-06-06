@@ -1,6 +1,8 @@
 package io.angstrom.hiveworker.service.api
 
-trait QueueService {
+import io.angstrom.hiveworker.service.Logging
+
+trait QueueService extends Logging {
 
   def getQueueUrl: String
 

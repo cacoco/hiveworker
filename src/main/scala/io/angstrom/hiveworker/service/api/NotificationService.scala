@@ -1,5 +1,7 @@
 package io.angstrom.hiveworker.service.api
 
-trait NotificationService {
+import io.angstrom.hiveworker.service.Logging
+
+trait NotificationService extends Logging {
   def sendNotification(subject: String, message: String)
 }

@@ -39,10 +39,10 @@ class MainController(applicationContext: Option[ApplicationContext])
   protected[this] def handleRequest(request: HttpRequest): Future[HttpResponse] = {
     import scala.concurrent.duration._
 
-    request.getUri match {
-      case "/status" =>
-        jobFlowService match {
-          case Some(service) =>
+    jobFlowService match {
+      case Some(service) =>
+        request.getUri match {
+          case "/status" =>
             val futureTry = service.describeJobFlows(createdBefore = Some(new Date())) map { result =>
               result match {
                 case Success(v) ⇒
@@ -55,10 +55,9 @@ class MainController(applicationContext: Option[ApplicationContext])
             // TODO: convert Scala Future to Twitter Future correctly
             val details: Map[String, Any] = Map("status" -> Await.result[JobFlowDetails](futureTry, 30.seconds))
             Future.value(JsonConverter(details))
-          case _ =>
-            Future.value(new DefaultHttpResponse(HttpVersion.HTTP_1_1, HttpResponseStatus.INTERNAL_SERVER_ERROR))
+          case _ => Future.value(new DefaultHttpResponse(HttpVersion.HTTP_1_1, HttpResponseStatus.BAD_REQUEST))
         }
-      case _ => Future.value(new DefaultHttpResponse(HttpVersion.HTTP_1_1, HttpResponseStatus.BAD_REQUEST))
+      case _ => Future.value(new DefaultHttpResponse(HttpVersion.HTTP_1_1, HttpResponseStatus.INTERNAL_SERVER_ERROR))
     }
   }
 }

@@ -42,11 +42,12 @@
     <constructor-arg value="${aws.sqs.queue.url.default}"/>
   </bean>
 
+  <!-- See: http://docs.amazonwebservices.com/ElasticMapReduce/latest/DeveloperGuide/UsingEMR_Hive.html -->
   <bean id="hiveEnvironment" class="io.angstrom.hiveworker.HiveEnvironmentImpl">
     <constructor-arg index="0" name="hadoopVersion" value="0.20.205" type="java.lang.String" />
     <constructor-arg index="1" name="amiVersion" value="2.0.4" type="java.lang.String" />
     <constructor-arg index="2" name="hiveVersion" value="0.7.1.3" type="java.lang.String" />
-    <constructor-arg index="3" name= "nodeHeapSize" value="2048" type="java.lang.String" />
+    <constructor-arg index="3" name="nodeHeapSize" value="2048" type="java.lang.String" />
   </bean>
 
   <bean id="jobConfigurationFile" class="java.lang.String">

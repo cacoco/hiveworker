@@ -3,14 +3,11 @@ package io.angstrom.hiveworker.service.impl
 import com.amazonaws.services.sns.AmazonSNS
 import com.amazonaws.services.sns.model.PublishRequest
 import com.amazonaws.util.json.{JSONException, JSONObject}
-import com.twitter.logging.Logger
 import io.angstrom.hiveworker.service.api.NotificationService
 
 class NotificationServiceImpl(
   val amazonSNSClient: AmazonSNS,
-  val defaultTopicARN: String
-) extends NotificationService {
-  val log = Logger.get(getClass)
+  val defaultTopicARN: String) extends NotificationService {
 
   def sendNotification(subject: String, message: String) {
     try {

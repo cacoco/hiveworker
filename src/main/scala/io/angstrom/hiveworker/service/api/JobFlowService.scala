@@ -1,14 +1,12 @@
 package io.angstrom.hiveworker.service.api
 
 import com.amazonaws.services.elasticmapreduce.model.JobFlowDetail
-import io.angstrom.hiveworker.HiveEnvironment
+import io.angstrom.hiveworker.service.Logging
 import java.util.Date
 import scala.concurrent.Future
 import scala.util.Try
 
-trait JobFlowService {
-  def hiveEnvironment: Option[HiveEnvironment]
-  def hiveEnvironment_= (hiveEnvironment: Option[HiveEnvironment])
+trait JobFlowService extends Logging {
 
   def submitJobFlow(attempt: Integer, jobFlow: JobFlow): Future[Try[SubmitJobFlowResult]]
 

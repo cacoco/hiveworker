@@ -25,13 +25,8 @@ object QuartzScheduler {
     scheduler.shutdown()
   }
 
-  def schedule(name: String, g: => Unit): ScheduleHolder = {
-    log.info("Scheduling function with name: %s".format(name))
-    val wrap: JobExecutionContext => Unit = x => g
-    scheduleWithContext(name, wrap)
-  }
-
-  private[this] def scheduleWithContext(name: String, f: JobExecutionContext => Unit): ScheduleHolder = {
+  def schedule(name: String, f: JobExecutionContext => Unit): ScheduleHolder = {
+    log.info("Scheduling job with name: %s".format(name))
     new ScheduleHolder(name, f, scheduler)
   }
 }
@@ -53,20 +48,22 @@ class ScheduleHolder(name: String, f: JobExecutionContext => Unit, scheduler: Sc
 }
 
 object ScheduleHolder {
-  type JobFunc = JobExecutionContext => Unit
+  type Job = JobExecutionContext => Unit
 
-  private val jobs = new collection.mutable.HashMap[String, JobFunc] with collection.mutable.SynchronizedMap[String, JobFunc]
+  private val jobs =
+    new collection.mutable.HashMap[String, Job]
+      with collection.mutable.SynchronizedMap[String, Job]
 
-  def add(name: String, job: JobFunc) {
+  def add(name: String, job: Job) {
     jobs.put(name, job)
   }
 
-  def get(name: String): Option[JobFunc] = jobs.get(name)
+  def get(name: String): Option[Job] = jobs.get(name)
 }
 
 class GenJob extends Job {
-  def execute(ctx: JobExecutionContext) {
-    val name = ctx.getJobDetail.getKey.getName
-    ScheduleHolder.get(name).map(f => f(ctx))
+  def execute(context: JobExecutionContext) {
+    val name = context.getJobDetail.getKey.getName
+    ScheduleHolder.get(name).map(f => f(context))
   }
 }

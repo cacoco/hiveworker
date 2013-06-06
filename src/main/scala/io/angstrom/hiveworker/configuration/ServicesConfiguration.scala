@@ -14,14 +14,13 @@ class ServicesConfiguration extends FunctionalConfiguration {
   importXml("classpath:/hiveworker-context.xml")
 
   bean("jobFlowService") {
-    val service = new JobFlowServiceImpl(
+    new JobFlowServiceImpl(
       getBean[AmazonElasticMapReduce]("elasticMapReduce"),
+      getBean[HiveEnvironment]("hiveEnvironment"),
       getBean[String]("bucket"),
       getBean[String]("logUri"),
       getBean[String]("masterInstanceType"),
       getBean[String]("slaveInstanceType"))
-    service.hiveEnvironment = Option(getBean[HiveEnvironment]("hiveEnvironment"))
-    service
   }
 
   bean("notificationService") {
