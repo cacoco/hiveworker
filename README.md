@@ -1,7 +1,7 @@
 #Hive Worker
 ![Hive Worker](http://www.gvsu.edu/gvnow/files/photos/EE23917D-D2F3-6596-4A71E2C7851753DA.jpg "Hive Worker")
 
-hiveworker is a Scala library to run [Hive](http://hive.apache.org/) job flows on the [Amazon Elastic MapReduce](http://aws.amazon.com/elasticmapreduce/) platform using the [AWS Java SDK](http://docs.amazonwebservices.com/AWSJavaSDK/latest/javadoc/index.html).
+hiveworker is a Scala library to schedule [Hive](http://hive.apache.org/) job flows on the [Amazon Elastic MapReduce](http://aws.amazon.com/elasticmapreduce/) platform using the [AWS Java SDK](http://docs.amazonwebservices.com/AWSJavaSDK/latest/javadoc/index.html).
 
 NOTE: this library is still in-progress
 
