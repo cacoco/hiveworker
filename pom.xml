@@ -308,7 +308,7 @@
         <configuration>
           <mainClass>io.angstrom.hiveworker.Server</mainClass>
           <arguments>
-            <argument>-dry-run=true</argument>
+            <argument>-dry.run=true</argument>
             <argument>-log.level=DEBUG</argument>
             <argument>-configuration=file:${project.basedir}/config/hiveworker.properties </argument>
           </arguments>

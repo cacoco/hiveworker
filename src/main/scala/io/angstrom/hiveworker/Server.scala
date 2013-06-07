@@ -13,7 +13,7 @@ import org.springframework.scala.context.function.FunctionalConfigApplicationCon
 
 object Server extends TwitterServer {
   val contextPropertiesPath = flag("configuration", "file://./config/hiveworker.properties", "Path to context properties file.")
-  val dryRun = flag("dry-run", false, "Don't schedule jobs")
+  val dryRun = flag("dry.run", false, "Don't schedule jobs")
 
   lazy val context: Option[ApplicationContext] = Some(FunctionalConfigApplicationContext(classOf[ServicesConfiguration]))
   lazy val handleExceptions = new HandleExceptionsFilter
