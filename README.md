@@ -48,7 +48,7 @@ jobs.configuration.file=/path/to/job_configuration.scala
 
 For the Job configuration file, see ```examples/example_config.scala``` as an example.
 
-The parsing of the job configuration steps supports a basic form of date/time formatting if the value sent is of type ```io.angstrom.hiveworker.util.StepArgument```. The default timezone used is UTC and
+The parsing of the job configuration steps supports a basic form of date/time formatting if the value sent is of type ```io.angstrom.hiveworker.util.StepArgument```. The default timezone used is _UTC_ and
 is not configurable. Supported formatting includes:
 
 ```

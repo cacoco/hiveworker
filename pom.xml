@@ -50,6 +50,11 @@
       <id>Twitter</id>
       <url>http://maven.twttr.com</url>
     </repository>
+    <repository>
+      <id>repository.springsource.milestone</id>
+      <name>SpringSource Milestone Repository</name>
+      <url>http://repo.springsource.org/milestone</url>
+    </repository>
   </repositories>
 
   <pluginRepositories>
@@ -182,7 +187,7 @@
     <dependency>
       <groupId>org.springframework.scala</groupId>
       <artifactId>spring-scala</artifactId>
-      <version>1.0.0.BUILD-SNAPSHOT</version>
+      <version>1.0.0.M2</version>
     </dependency>
 
     <!-- Test -->
