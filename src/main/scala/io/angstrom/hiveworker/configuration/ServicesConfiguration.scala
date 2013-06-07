@@ -1,6 +1,7 @@
 package io.angstrom.hiveworker.configuration
 
 import com.amazonaws.services.elasticmapreduce.AmazonElasticMapReduce
+import com.amazonaws.services.elasticmapreduce.model.ActionOnFailure
 import com.amazonaws.services.sns.AmazonSNS
 import com.amazonaws.services.sqs.AmazonSQS
 import com.twitter.util.Eval
@@ -17,6 +18,7 @@ class ServicesConfiguration extends FunctionalConfiguration {
     new JobFlowServiceImpl(
       getBean[AmazonElasticMapReduce]("elasticMapReduce"),
       getBean[HiveEnvironment]("hiveEnvironment"),
+      getBean[ActionOnFailure]("jobActionOnFailure"),
       getBean[String]("bucket"),
       getBean[String]("logUri"),
       getBean[String]("masterInstanceType"),

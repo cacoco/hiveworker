@@ -15,19 +15,8 @@ class JobsController(applicationContext: Option[ApplicationContext]) extends Ser
   def apply(request: HttpRequest): Future[HttpResponse] = {
     jobFlowConfiguration match {
       case Some(config) =>
-        val data = config().foldLeft(Seq[Map[String, Any]]()){ (s: Seq[Map[String, Any]], jobFlowConfig: JobFlow) =>
-          val steps = jobFlowConfig.steps.foldLeft(Seq[(String, String)]()){ (s: Seq[(String, String)], step: Step) =>
-            s :+ (step.name -> step.value)
-          }
-          val m = Map[String, Any](
-            "name" -> jobFlowConfig.name.getOrElse(""),
-            "canonical_name" -> jobFlowConfig.canonicalName,
-            "type" -> jobFlowConfig.`type`.s,
-            "instances" -> jobFlowConfig.instances.getOrElse("0"),
-            "max_attempts" -> jobFlowConfig.maxAttempts.getOrElse("0"),
-            "script" -> jobFlowConfig.script,
-            "steps" -> steps)
-          s :+ m
+        val data = config().foldLeft(Seq[Map[String, Any]]()){ (s, jobFlow) =>
+          s :+ mapJobFlowObject(jobFlow)
         }
 
         val jobs: Map[String, Any] = Map("jobs" -> data)
@@ -35,5 +24,20 @@ class JobsController(applicationContext: Option[ApplicationContext]) extends Ser
       case _ =>
         Future.value(new DefaultHttpResponse(HttpVersion.HTTP_1_1, HttpResponseStatus.INTERNAL_SERVER_ERROR))
     }
+  }
+
+  private def mapStepObjects(steps: Seq[Step]): Seq[(String, String)] = {
+    steps.foldLeft(Seq[(String, String)]()){ (s, step) => s :+ (step.name -> step.value) }
+  }
+
+  private def mapJobFlowObject(jobFlow: JobFlow): Map[String, Any] = {
+    Map[String, Any](
+      "name" -> jobFlow.name.getOrElse(""),
+      "canonical_name" -> jobFlow.canonicalName,
+      "type" -> jobFlow.`type`.s,
+      "instances" -> jobFlow.instances.getOrElse("0"),
+      "max_attempts" -> jobFlow.maxAttempts.getOrElse("0"),
+      "script" -> jobFlow.script,
+      "steps" -> mapStepObjects(jobFlow.steps))
   }
 }

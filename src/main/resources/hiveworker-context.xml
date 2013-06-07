@@ -42,6 +42,14 @@
     <constructor-arg value="${aws.sqs.queue.url.default}"/>
   </bean>
 
+  <bean id="jobActionOnFailure"
+        class="com.amazonaws.services.elasticmapreduce.model.ActionOnFailure"
+        factory-method="valueOf">
+    <constructor-arg>
+      <value>${job.action.on.failure}</value>
+    </constructor-arg>
+  </bean>
+
   <!-- See: http://docs.amazonwebservices.com/ElasticMapReduce/latest/DeveloperGuide/UsingEMR_Hive.html -->
   <bean id="hiveEnvironment" class="io.angstrom.hiveworker.HiveEnvironmentImpl">
     <constructor-arg index="0" name="hadoopVersion" value="0.20.205" type="java.lang.String" />

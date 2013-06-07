@@ -28,9 +28,8 @@ object Server extends TwitterServer {
     }
 
     QuartzScheduler.start()
-
     if (dryRun()) {
-      log.info("Skipping job scheduling.  ")
+      log.info("Skipping job scheduling. ")
     } else {
       // Create jobs
       QuartzScheduler.schedule("hourly", new HourlyProcessor(context)) at "0 0 0/1 1/1 * ? *"

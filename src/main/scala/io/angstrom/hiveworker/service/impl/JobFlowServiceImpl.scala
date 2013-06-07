@@ -26,6 +26,7 @@ object JobFlowServiceImpl {
 class JobFlowServiceImpl(
   val elasticMapReduceClient: AmazonElasticMapReduce,
   val hiveEnvironment: HiveEnvironment,
+  val defaultJobActionOnFailure: ActionOnFailure,
   val bucket: String,
   val logUri: String,
   val masterInstanceType: String,
@@ -83,7 +84,7 @@ class JobFlowServiceImpl(
     val path = "%1$s/scripts/%2$s".format(bucket, jobFlowConfiguration.script)
     val __runHiveScript = new StepConfig()
       .withName(String.format("Run Hive Script"))
-      .withActionOnFailure(ActionOnFailure.TERMINATE_JOB_FLOW) // TODO: is TERMINATE correct?
+      .withActionOnFailure(defaultJobActionOnFailure)
     // Make sure to add the bucket as an step argument
     val arguments = jobFlowConfiguration.steps.foldLeft(List("-d", "%s=%s".format(Bucket, bucket))) { (list, step) =>
       list ++ List("-d", "%s=%s".format(step.name, step.value))
@@ -95,9 +96,11 @@ class JobFlowServiceImpl(
     val bootstrapActions: List[BootstrapActionConfig] = List(__configureDaemons)
     val __steps: List[StepConfig] = List(__enableDebugging, __installHive, __runHiveScript)
 
+    val visibleToAllUsers = jobFlowConfiguration.visibleToAllUsers getOrElse false
     // Create JobFlowRequest
     val jobFlowRequest = new RunJobFlowRequest().
       withName(name).
+      withVisibleToAllUsers(visibleToAllUsers).
       withAmiVersion(hiveEnvironment.amiVersion).
       withBootstrapActions(bootstrapActions.asJavaCollection).
       withSteps(__steps.asJavaCollection).
