@@ -28,7 +28,7 @@
     <encoding>UTF-8</encoding>
     <slf4j.version>1.7.5</slf4j.version>
     <scala.version>2.10.1</scala.version>
-    <spring.version>3.2.2.RELEASE</spring.version>
+    <spring.version>3.2.3.RELEASE</spring.version>
     <aws.jdk.version>1.4.1</aws.jdk.version>
   </properties>
 

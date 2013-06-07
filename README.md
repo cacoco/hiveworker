@@ -24,6 +24,39 @@ cd hiveworker
 mvn clean install
 ```
 
+## Configuration ################################################################
+
+Hive Worker uses [Spring](http://static.springsource.org/spring/docs/current/javadoc-api/) for dependency injection. All you need to do is point Hive Worker to a 'hiveworker.properties' file.
+
+This file should have the following keys (these can be culled from the hiveworker-context.xml file):
+
+```
+aws.access.key=YOUR_KEY
+aws.access.secret.key=YOUR_SECRET
+aws.client.connection.timeout=50000
+aws.client.max.connections=10
+aws.client.socket.timeout=50000
+aws.sns.topic.arn.job.errors=arn:aws:sns:us-west-2:111111111111:mapreduce-job-errors
+aws.sqs.queue.url.default=https://queue.amazonaws.com/111111111111/HIVE_JOB_FLOW
+hadoop.bucket=s3://hadoop.angstrom.io
+hadoop.instance.type.master=m1.small
+hadoop.instance.type.slave=m1.small
+hadoop.log.uri=s3://hadoop.angstrom.io/logs
+job.action.on.failure=TERMINATE_JOB_FLOW
+jobs.configuration.file=/path/to/job_configuration.scala
+```
+
+For the Job configuration file, see ```examples/example_config.scala``` as an example.
+
+The parsing of the job configuration steps supports a basic form of date/time formatting if the value sent is of type ```io.angstrom.hiveworker.util.StepArgument```. The default timezone used is UTC and
+is not configurable. Supported formatting includes:
+
+```
+Hour, LastHour, Today, Yesterday, TwoDaysAgo, LastMonth
+```
+
+Hive Worker uses the [joda-time](http://joda-time.sourceforge.net/) library for date/time manipulation and formatting.
+
 ## Running ######################################################################
 
 Hive Worker uses [Finagle](https://github.com/twitter/finagle) as a server stack. See Finagle's [User's Guide](http://twitter.github.io/finagle/guide/) for more information.
@@ -31,5 +64,5 @@ Hive Worker uses [Finagle](https://github.com/twitter/finagle) as a server stack
 To run:
 
 ```
-mvn exec:java -Dexec.args="-configuration=file:/path/to/hiveworker.properties -jobs=/path/to/job/configuration.scala"
+mvn exec:java -Dexec.args="-configuration=file:/path/to/hiveworker.properties"
 ```
