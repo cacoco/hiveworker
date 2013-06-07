@@ -10,8 +10,9 @@ object StepArgument extends Enumeration {
 
 /**
  * A utility object for holding Job step configuration for a given job flow.
- * This supports some basic datetime formatting if the value sent is of type: StepArgument.
- * The timezone is UTC by default and is not configurable.
+ * This supports some basic datetime formatting if the value sent is of type
+ * <code>io.angstrom.hiveworker.util.StepArgument</code>. The timezone is
+ * UTC by default and is not configurable.
  */
 object Step {
 
@@ -20,7 +21,6 @@ object Step {
   val HourPattern = DateTimeFormat.forPattern("yyyy-MM-dd-HH")
   val DayPattern = DateTimeFormat.forPattern("yyyy-MM-dd")
   val MonthPattern = DateTimeFormat.forPattern("yyyy-MM")
-
 
   def apply(name: String, value: Any): Step = {
     val now = DateTime.now(DateTimeZone.UTC)
