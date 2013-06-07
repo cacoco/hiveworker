@@ -46,7 +46,7 @@
         class="com.amazonaws.services.elasticmapreduce.model.ActionOnFailure"
         factory-method="valueOf">
     <constructor-arg>
-      <value>${job.action.on.failure}</value>
+      <value>${job.action.onfailure}</value>
     </constructor-arg>
   </bean>
 

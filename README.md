@@ -26,9 +26,9 @@ mvn clean install
 
 ## Configuration ################################################################
 
-Hive Worker uses [Spring](http://static.springsource.org/spring/docs/current/javadoc-api/) for dependency injection. All you need to do is point Hive Worker to a 'hiveworker.properties' file.
+Hive Worker uses [Spring](http://static.springsource.org/spring/docs/current/javadoc-api/) for dependency injection. All you need to do is point Hive Worker to a ```hiveworker.properties``` file.
 
-This file should have the following keys (these can be culled from the hiveworker-context.xml file):
+This file should have the following keys (these can be culled from the ```src/main/resources/hiveworker-context.xml``` file):
 
 ```
 aws.access.key=YOUR_KEY
@@ -42,7 +42,7 @@ hadoop.bucket=s3://hadoop.angstrom.io
 hadoop.instance.type.master=m1.small
 hadoop.instance.type.slave=m1.small
 hadoop.log.uri=s3://hadoop.angstrom.io/logs
-job.action.on.failure=TERMINATE_JOB_FLOW
+job.action.onfailure=TERMINATE_JOB_FLOW
 jobs.configuration.file=/path/to/job_configuration.scala
 ```
 
