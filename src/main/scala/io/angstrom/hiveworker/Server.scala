@@ -1,5 +1,6 @@
 package io.angstrom.hiveworker
 
+import com.twitter.finagle.Service
 import com.twitter.finagle.http.HttpMuxer
 import com.twitter.server.TwitterServer
 import com.twitter.util.Await
@@ -8,6 +9,7 @@ import io.angstrom.hiveworker.controller.{JobsController, MainController}
 import io.angstrom.hiveworker.filters.HandleExceptionsFilter
 import io.angstrom.hiveworker.processor.{DailyProcessor, HourlyProcessor}
 import io.angstrom.hiveworker.util.QuartzScheduler
+import org.jboss.netty.handler.codec.http.{HttpResponse, HttpRequest}
 import org.springframework.context.ApplicationContext
 import org.springframework.scala.context.function.FunctionalConfigApplicationContext
 
@@ -18,13 +20,17 @@ object Server extends TwitterServer {
   lazy val context: Option[ApplicationContext] = Some(FunctionalConfigApplicationContext(classOf[ServicesConfiguration]))
   lazy val handleExceptions = new HandleExceptionsFilter
 
+  protected[Server] def service(controller: Service[HttpRequest, HttpResponse]) = {
+    handleExceptions andThen controller
+  }
+
   def main() {
     System.setProperty("hiveworker.configuration", contextPropertiesPath.apply())
 
-    HttpMuxer.addHandler("/jobs", (handleExceptions andThen new JobsController(context)))
-    val service = handleExceptions andThen new MainController(context)
+    HttpMuxer.addHandler("/jobs", service(new JobsController(context)))
+    val main = service(new MainController(context))
     for (route <- MainController.routes) {
-      HttpMuxer.addHandler(route, service)
+      HttpMuxer.addHandler(route, main)
     }
 
     QuartzScheduler.start()
