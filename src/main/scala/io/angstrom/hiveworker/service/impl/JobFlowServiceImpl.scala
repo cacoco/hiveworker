@@ -3,13 +3,13 @@ package io.angstrom.hiveworker.service.impl
 import com.amazonaws.services.elasticmapreduce.AmazonElasticMapReduce
 import com.amazonaws.services.elasticmapreduce.model._
 import com.amazonaws.services.elasticmapreduce.util.StepFactory
+import com.twitter.util._
 import io.angstrom.hiveworker.HiveEnvironment
-import io.angstrom.hiveworker.service.api.{JobFlow, SubmitJobFlowResult, JobFlowService}
+import io.angstrom.hiveworker.service.api.JobFlow
+import io.angstrom.hiveworker.service.api.JobFlowService
+import io.angstrom.hiveworker.service.api.SubmitJobFlowResult
 import java.util.Date
 import scala.collection.JavaConverters._
-import scala.concurrent.ExecutionContext.Implicits.global
-import scala.concurrent.{Future, future}
-import scala.util.{Success, Failure, Try}
 
 object JobFlowServiceImpl {
   val MessageKeyJobName = "name"
@@ -34,20 +34,22 @@ class JobFlowServiceImpl(
 
   import JobFlowServiceImpl._
 
+  private lazy val futurePool = FuturePool.unboundedPool
+
   def submitJobFlow(attempt: Integer, jobFlow: JobFlow): Future[Try[SubmitJobFlowResult]] = {
     log.info("Creating job flow task for script: [%s], attempt: [%s]".format(jobFlow.script, attempt))
 
     val maxAttempts: Int = jobFlow.maxAttempts getOrElse 1
     if (attempt > maxAttempts) {
-      return Future(Failure(new Exception("Max attempts: %s exceeded.".format(maxAttempts))))
+      return Future(Throw(new Exception("Max attempts: %s exceeded.".format(maxAttempts))))
     }
     val request = createJobFlowRequest(jobFlow)
-    future {
+    futurePool {
       runJobFlow(request) match {
-        case Success(jobFlowId) =>
-          Success(SubmitJobFlowResult(jobFlowId))
+        case Return(jobFlowId) =>
+          Return(SubmitJobFlowResult(jobFlowId))
         case _ =>
-          Failure(new Exception("Job flow id is null. Request: [%s] attempt: [%s].".format(request.getName, attempt)))
+          Throw(new Exception("Job flow id is null. Request: [%s] attempt: [%s].".format(request.getName, attempt)))
       }
     }
   }
@@ -131,7 +133,7 @@ class JobFlowServiceImpl(
   def describeJobFlow(jobFlowId: String): Future[Try[JobFlowDetail]] = {
     val request = new DescribeJobFlowsRequest().
       withJobFlowIds(Seq(jobFlowId).asJavaCollection)
-    future {
+    futurePool {
       for (describeResult <- Try(elasticMapReduce.describeJobFlows(request)))
         yield describeResult.getJobFlows.get(0) // pop off first (and only) result.
     }
@@ -145,9 +147,9 @@ class JobFlowServiceImpl(
     val request = new DescribeJobFlowsRequest().
       withJobFlowIds(jobFlowIds.asJavaCollection).
       withJobFlowStates(jobFlowStates: _*)
-    createdAfter map { request.withCreatedAfter(_) }
-    createdBefore map { request.withCreatedBefore(_) }
-    future {
+    createdAfter map request.withCreatedAfter
+    createdBefore map request.withCreatedBefore
+    futurePool {
       for (describeResult <- Try(elasticMapReduce.describeJobFlows(request)))
         yield describeResult.getJobFlows.asScala.toSeq
     }
@@ -155,7 +157,7 @@ class JobFlowServiceImpl(
 
   def terminateJobFlows(jobFlowIds: String*) {
     val request = new TerminateJobFlowsRequest().withJobFlowIds(jobFlowIds:_ *)
-    future {
+    futurePool {
       elasticMapReduce.terminateJobFlows(request)
     }
   }

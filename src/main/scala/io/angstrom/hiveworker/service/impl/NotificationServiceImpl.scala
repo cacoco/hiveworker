@@ -3,31 +3,37 @@ package io.angstrom.hiveworker.service.impl
 import com.amazonaws.services.sns.AmazonSNS
 import com.amazonaws.services.sns.model.PublishRequest
 import com.amazonaws.util.json.{JSONException, JSONObject}
+import com.twitter.util.{FuturePool, Future}
 import io.angstrom.hiveworker.service.api.NotificationService
+import javax.inject.{Named, Inject}
 
-class NotificationServiceImpl(
-  val amazonSNSClient: AmazonSNS,
-  val defaultTopicARN: String) extends NotificationService {
+class NotificationServiceImpl @Inject()(
+  amazonSNSClient: AmazonSNS,
+  @Named("aws.sns.topic.arn.job.errors") defaultTopicARN: String) extends NotificationService {
 
-  def sendNotification(subject: String, message: String) {
-    try {
-      val json = new JSONObject()
-      json.put("default", message)
+  private lazy val futurePool = FuturePool.unboundedPool
 
-      val request = new PublishRequest().
-        withTopicArn(defaultTopicARN).
-        withSubject(subject).
-        withMessage(json.toString).
-        withMessageStructure("json")
+  def sendNotification(subject: String, message: String): Future[Unit] = {
+    futurePool {
+      try {
+        val json = new JSONObject()
+        json.put("default", message)
 
-      Option(amazonSNSClient.publish(request)) map { result =>
-        log.info("Published notification: [%s]".format(result.getMessageId))
+        val request = new PublishRequest().
+          withTopicArn(defaultTopicARN).
+          withSubject(subject).
+          withMessage(json.toString).
+          withMessageStructure("json")
+
+        Option(amazonSNSClient.publish(request)) map { result =>
+          log.info("Published notification: [%s]".format(result.getMessageId))
+        }
+      } catch {
+        case e: JSONException =>
+          log.error(e, e.getMessage)
+        case e: Exception =>
+          log.error(e, e.getMessage)
       }
-    } catch {
-      case e: JSONException =>
-        log.error(e, e.getMessage)
-      case e: Exception =>
-        log.error(e, e.getMessage)
     }
   }
 }

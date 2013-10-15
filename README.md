@@ -28,8 +28,6 @@ mvn clean install
 
 Hive Worker uses [Spring](http://static.springsource.org/spring/docs/current/javadoc-api/) for dependency injection. All you need to do is point Hive Worker to a ```hiveworker.properties``` file.
 
-This file should have the following keys (these can be culled from the ```src/main/resources/hiveworker-context.xml``` file):
-
 ```
 aws.access.key=YOUR_KEY
 aws.access.secret.key=YOUR_SECRET

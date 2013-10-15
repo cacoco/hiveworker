@@ -7,7 +7,7 @@ import scala.collection.JavaConverters._
 import scala.collection.breakOut
 
 object PropertiesModule {
-  def create(flags: Seq[Flag[_]]) = {
+  def apply(flags: Seq[Flag[_]]) = {
     val propertiesMap = (flags map { elem =>
       elem.name -> elem.apply().toString
     })(breakOut)

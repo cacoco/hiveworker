@@ -282,7 +282,6 @@
           <arguments>
             <argument>-dry.run=true</argument>
             <argument>-log.level=DEBUG</argument>
-            <argument>-configuration=file:${project.basedir}/config/hiveworker.properties </argument>
           </arguments>
         </configuration>
       </plugin>
