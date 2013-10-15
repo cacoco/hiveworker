@@ -1,10 +1,9 @@
 package io.angstrom.hiveworker.service.api
 
 import com.amazonaws.services.elasticmapreduce.model.JobFlowDetail
+import com.twitter.util.{Throw, Return, Try, Future}
 import io.angstrom.hiveworker.service.Logging
 import java.util.Date
-import scala.concurrent.Future
-import scala.util.Try
 
 trait JobFlowService extends Logging {
 
@@ -20,4 +19,14 @@ trait JobFlowService extends Logging {
   ): Future[Try[Seq[JobFlowDetail]]]
 
   def terminateJobFlows(jobFlowId: String*)
+
+  def parseJobFlowDetails(results: Try[Seq[JobFlowDetail]]): JobFlowDetails = {
+    results match {
+      case Return(v: Seq[JobFlowDetail]) ⇒
+        JobFlowDetails(details = v)
+      case Throw(e) ⇒
+        log.error(e, e.getMessage)
+        JobFlowDetails()
+    }
+  }
 }

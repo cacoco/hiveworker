@@ -10,7 +10,6 @@ import org.jboss.netty.util.CharsetUtil.UTF_8
 
 class HandleExceptionsFilter extends SimpleFilter[HttpRequest, HttpResponse] {
   def apply(request: HttpRequest, service: Service[HttpRequest, HttpResponse]) = {
-    // `handle` asynchronously handles exceptions.
     service(request) handle { case error =>
       val statusCode = error match {
         case _: IllegalArgumentException =>

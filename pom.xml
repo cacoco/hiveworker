@@ -4,7 +4,7 @@
   <artifactId>hiveworker</artifactId>
   <version>0.0.1-SNAPSHOT</version>
   <name>${project.artifactId}</name>
-  <description>Hive Job submittal to AWS EMR in Scala using Finagle</description>
+  <description>Hive Job submittal to AWS EMR in Scala using Twitter-Server</description>
   <inceptionYear>2012</inceptionYear>
   <url>http://github.com/cacoco/hiveworker</url>
 
@@ -28,7 +28,6 @@
     <encoding>UTF-8</encoding>
     <slf4j.version>1.7.5</slf4j.version>
     <scala.version>2.10.1</scala.version>
-    <spring.version>3.2.3.RELEASE</spring.version>
     <aws.jdk.version>1.4.1</aws.jdk.version>
   </properties>
 
@@ -49,11 +48,6 @@
     <repository>
       <id>Twitter</id>
       <url>http://maven.twttr.com</url>
-    </repository>
-    <repository>
-      <id>repository.springsource.milestone</id>
-      <name>SpringSource Milestone Repository</name>
-      <url>http://repo.springsource.org/milestone</url>
     </repository>
   </repositories>
 
@@ -87,13 +81,6 @@
   <!-- END REPOSITORIES -->
 
   <!-- DEPENDENCIES -->
-  <distributionManagement>
-    <repository>
-      <id>milestone.repo.springsource.org</id>
-      <name>repo.springsource.org-milestone</name>
-      <url>https://repo.springsource.org/libs-milestone</url>
-    </repository>
-  </distributionManagement>
   <dependencies>
 
     <!-- SLF4J -->
@@ -148,12 +135,12 @@
     <dependency>
       <groupId>com.twitter</groupId>
       <artifactId>twitter-server_2.10</artifactId>
-      <version>1.0.1</version>
+      <version>1.1.0</version>
     </dependency>
     <dependency>
       <groupId>com.twitter</groupId>
       <artifactId>util-eval_2.10</artifactId>
-      <version>6.2.4</version>
+      <version>6.5.0</version>
     </dependency>
 
     <!-- Jackson -->
@@ -163,31 +150,11 @@
       <version>2.1.3</version>
     </dependency>
 
-    <!-- Spring -->
+    <!-- Guice -->
     <dependency>
-      <groupId>org.springframework</groupId>
-      <artifactId>spring-beans</artifactId>
-      <version>${spring.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>org.springframework</groupId>
-      <artifactId>spring-context</artifactId>
-      <version>${spring.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>org.springframework</groupId>
-      <artifactId>spring-context-support</artifactId>
-      <version>${spring.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>org.springframework</groupId>
-      <artifactId>spring-core</artifactId>
-      <version>${spring.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>org.springframework.scala</groupId>
-      <artifactId>spring-scala</artifactId>
-      <version>1.0.0.M2</version>
+      <groupId>net.codingwell</groupId>
+      <artifactId>scala-guice_2.10</artifactId>
+      <version>4.0.0-beta</version>
     </dependency>
 
     <!-- Test -->

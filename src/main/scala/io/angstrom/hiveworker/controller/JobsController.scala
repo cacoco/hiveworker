@@ -5,25 +5,18 @@ import com.twitter.util.Future
 import io.angstrom.hiveworker.service.api.{JobFlow, JobFlowConfiguration}
 import io.angstrom.hiveworker.util.{JsonConverter, Step}
 import org.jboss.netty.handler.codec.http._
-import org.springframework.context.ApplicationContext
+import javax.inject.Inject
 
-class JobsController(applicationContext: Option[ApplicationContext]) extends Service[HttpRequest, HttpResponse] {
-
-  lazy val jobFlowConfiguration: Option[JobFlowConfiguration] =
-    applicationContext map { _.getBean("jobFlowConfiguration").asInstanceOf[JobFlowConfiguration] }
+class JobsController @Inject()(
+  jobFlowConfiguration: JobFlowConfiguration) extends Service[HttpRequest, HttpResponse] {
 
   def apply(request: HttpRequest): Future[HttpResponse] = {
-    jobFlowConfiguration match {
-      case Some(config) =>
-        val data = config().foldLeft(Seq[Map[String, Any]]()){ (s, jobFlow) =>
-          s :+ mapJobFlowObject(jobFlow)
-        }
-
-        val jobs: Map[String, Any] = Map("jobs" -> data)
-        Future.value(JsonConverter(jobs))
-      case _ =>
-        Future.value(new DefaultHttpResponse(HttpVersion.HTTP_1_1, HttpResponseStatus.INTERNAL_SERVER_ERROR))
+    val data = jobFlowConfiguration().foldLeft(Seq[Map[String, Any]]()){ (s, jobFlow) =>
+      s :+ mapJobFlowObject(jobFlow)
     }
+
+    val jobs: Map[String, Any] = Map("jobs" -> data)
+    Future.value(JsonConverter(jobs))
   }
 
   private def mapStepObjects(steps: Seq[Step]): Seq[(String, String)] = {

@@ -24,7 +24,7 @@ object JobFlowServiceImpl {
 }
 
 class JobFlowServiceImpl(
-  val elasticMapReduceClient: AmazonElasticMapReduce,
+  val elasticMapReduce: AmazonElasticMapReduce,
   val hiveEnvironment: HiveEnvironment,
   val defaultJobActionOnFailure: ActionOnFailure,
   val bucket: String,
@@ -124,7 +124,7 @@ class JobFlowServiceImpl(
   }
 
   protected[this] def runJobFlow(request: RunJobFlowRequest): Try[String] = {
-    for (runJobFlowResult <- Try(elasticMapReduceClient.runJobFlow(request)))
+    for (runJobFlowResult <- Try(elasticMapReduce.runJobFlow(request)))
       yield runJobFlowResult.getJobFlowId
   }
 
@@ -132,7 +132,7 @@ class JobFlowServiceImpl(
     val request = new DescribeJobFlowsRequest().
       withJobFlowIds(Seq(jobFlowId).asJavaCollection)
     future {
-      for (describeResult <- Try(elasticMapReduceClient.describeJobFlows(request)))
+      for (describeResult <- Try(elasticMapReduce.describeJobFlows(request)))
         yield describeResult.getJobFlows.get(0) // pop off first (and only) result.
     }
   }
@@ -148,7 +148,7 @@ class JobFlowServiceImpl(
     createdAfter map { request.withCreatedAfter(_) }
     createdBefore map { request.withCreatedBefore(_) }
     future {
-      for (describeResult <- Try(elasticMapReduceClient.describeJobFlows(request)))
+      for (describeResult <- Try(elasticMapReduce.describeJobFlows(request)))
         yield describeResult.getJobFlows.asScala.toSeq
     }
   }
@@ -156,7 +156,7 @@ class JobFlowServiceImpl(
   def terminateJobFlows(jobFlowIds: String*) {
     val request = new TerminateJobFlowsRequest().withJobFlowIds(jobFlowIds:_ *)
     future {
-      elasticMapReduceClient.terminateJobFlows(request)
+      elasticMapReduce.terminateJobFlows(request)
     }
   }
 }

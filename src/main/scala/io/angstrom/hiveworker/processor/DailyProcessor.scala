@@ -1,9 +1,12 @@
 package io.angstrom.hiveworker.processor
 
+import io.angstrom.hiveworker.service.api.{JobFlowService, JobFlowConfiguration}
 import io.angstrom.hiveworker.util.JobType
-import org.springframework.context.ApplicationContext
+import javax.inject.Inject
 
-class DailyProcessor(applicationContext: Option[ApplicationContext])
-  extends JobProcessor(applicationContext) {
+class DailyProcessor @Inject()(
+  jobFlowConfiguration: JobFlowConfiguration,
+  jobFlowService: JobFlowService)
+  extends JobProcessor(jobFlowConfiguration, jobFlowService) {
   def jobType = JobType.DAILY
 }
