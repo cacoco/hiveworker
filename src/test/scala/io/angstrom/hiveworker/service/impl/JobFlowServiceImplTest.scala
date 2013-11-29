@@ -8,12 +8,13 @@ import io.angstrom.hiveworker.service.api.{SubmitJobFlowResult, JobFlow}
 import io.angstrom.hiveworker.util.{StepArgument, Step, JobType}
 import org.apache.commons.lang.RandomStringUtils
 import org.easymock.EasyMock.anyObject
+import org.scalatest.ShouldMatchers
 import org.scalatest.mock.EasyMockSugar
-import org.scalatest.{Assertions, ShouldMatchers}
+import org.scalatest.testng.TestNGSuite
 import org.testng.annotations.{Test, AfterTest, BeforeTest}
 
 class JobFlowServiceImplTest
-  extends Assertions
+  extends TestNGSuite
   with ShouldMatchers
   with EasyMockSugar {
 
