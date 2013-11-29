@@ -26,18 +26,12 @@ class JobFlowServiceImplTest
   val slaveInstanceType = "m1.small"
 
   @BeforeTest(alwaysRun = true)
-  def beforeTest() {
-    println("in before.")
-  }
+  def beforeTest() {}
 
   @AfterTest(alwaysRun = true)
-  def afterTest() {
-    println("in after.")
-  }
+  def afterTest() {}
 
   @Test def testSubmitJobFlow() {
-    println("in test.")
-
     /* mocks */
     val mapReduceClient = mock[AmazonElasticMapReduce]
     implicit val mocks = MockObjects(mapReduceClient)
