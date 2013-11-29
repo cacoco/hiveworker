@@ -2,7 +2,7 @@ package io.angstrom.hiveworker.service.api
 
 import com.amazonaws.services.elasticmapreduce.model.JobFlowDetail
 import com.twitter.util.{Throw, Return, Try, Future}
-import io.angstrom.hiveworker.service.Logging
+import grizzled.slf4j.Logging
 import java.util.Date
 
 trait JobFlowService extends Logging {
@@ -18,14 +18,14 @@ trait JobFlowService extends Logging {
     jobFlowStates: Seq[String] = Seq[String]()
   ): Future[Try[Seq[JobFlowDetail]]]
 
-  def terminateJobFlows(jobFlowId: String*)
+  def terminateJobFlows(jobFlowId: String*): Future[Unit]
 
   def parseJobFlowDetails(results: Try[Seq[JobFlowDetail]]): JobFlowDetails = {
     results match {
       case Return(v: Seq[JobFlowDetail]) ⇒
         JobFlowDetails(details = v)
       case Throw(e) ⇒
-        log.error(e, e.getMessage)
+        error(e.getMessage, e)
         JobFlowDetails()
     }
   }

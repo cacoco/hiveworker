@@ -1,9 +1,8 @@
 package io.angstrom.hiveworker.service.api
 
 import com.twitter.util.Future
-import io.angstrom.hiveworker.service.Logging
 
-trait QueueService extends Logging {
+trait QueueService {
 
   def getQueueUrl: String
 

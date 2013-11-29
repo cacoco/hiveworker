@@ -89,13 +89,19 @@
       <artifactId>slf4j-simple</artifactId>
       <version>${slf4j.version}</version>
     </dependency>
-    <!-- Binding for slf4j through commons logging since this
+    <!-- Binding for commons logging through slf4j since this
          is what twitter-server uses, but Quartz uses slf4j -->
     <dependency>
       <groupId>org.slf4j</groupId>
-      <artifactId>slf4j-jcl</artifactId>
+      <artifactId>jcl-over-slf4j</artifactId>
       <version>${slf4j.version}</version>
       <scope>runtime</scope>
+    </dependency>
+    <!-- Scala-friendly wrapper over SLF4J -->
+    <dependency>
+      <groupId>org.clapper</groupId>
+      <artifactId>grizzled-slf4j_2.10</artifactId>
+      <version>1.0.1</version>
     </dependency>
 
     <!-- Scala Lib -->
@@ -161,19 +167,19 @@
     <dependency>
       <groupId>org.scalatest</groupId>
       <artifactId>scalatest_2.10</artifactId>
-      <version>1.9.1</version>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.slf4j</groupId>
-      <artifactId>slf4j-nop</artifactId>
-      <version>${slf4j.version}</version>
+      <version>2.0</version>
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>org.scalamock</groupId>
       <artifactId>scalamock-scalatest-support_2.10</artifactId>
       <version>3.0.1</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.easymock</groupId>
+      <artifactId>easymock</artifactId>
+      <version>3.0</version>
       <scope>test</scope>
     </dependency>
     <dependency>

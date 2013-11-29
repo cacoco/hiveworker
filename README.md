@@ -3,9 +3,11 @@
 
 [![Build Status](https://travis-ci.org/cacoco/hiveworker.png?branch=master)](https://travis-ci.org/cacoco/hiveworker)
 
-Hive Worker is a Scala library to schedule [Hive](http://hive.apache.org/) job flows on the [Amazon Elastic MapReduce](http://aws.amazon.com/elasticmapreduce/) platform using the [AWS Java SDK](http://docs.amazonwebservices.com/AWSJavaSDK/latest/javadoc/index.html).
+Hive Worker is a Scala library to run [Hive](http://hive.apache.org/) job flows on the [Amazon Elastic MapReduce](http://aws.amazon.com/elasticmapreduce/) platform using the [AWS Java SDK](http://docs.amazonwebservices.com/AWSJavaSDK/latest/javadoc/index.html).
 
-NOTE: this library is still in-progress
+Hive Worker uses Google [guice](https://code.google.com/p/google-guice/) and [twitter-server](https://github.com/twitter/twitter-server) as a server stack. twitter-server is built on top of [Finagle](https://github.com/twitter/finagle) -- see Finagle's [User's Guide](http://twitter.github.io/finagle/guide/) for more information.
+
+_NOTE_: this library is a work in-progress
 
 ## Install ######################################################################
 
@@ -26,9 +28,7 @@ mvn clean install
 
 ## Configuration ################################################################
 
-Hive Worker uses [Spring](http://static.springsource.org/spring/docs/current/javadoc-api/) for dependency injection. All you need to do is point Hive Worker to a ```hiveworker.properties``` file.
-
-```
+<!--```
 aws.access.key=YOUR_KEY
 aws.access.secret.key=YOUR_SECRET
 aws.client.connection.timeout=50000
@@ -42,25 +42,25 @@ hadoop.instance.type.slave=m1.small
 hadoop.log.uri=s3://hadoop.angstrom.io/logs
 job.action.onfailure=TERMINATE_JOB_FLOW
 jobs.configuration.file=/path/to/job_configuration.scala
-```
+```-->
 
-For the Job configuration file, see ```examples/example_config.scala``` as an example.
+<!--For the Job configuration file, see ```examples/example_config.scala``` as an example.
 
 The parsing of the job configuration steps supports a basic form of date/time formatting if the value sent is of type ```io.angstrom.hiveworker.util.StepArgument```. The default timezone is __UTC__ and
 is not configurable. Supported formatting includes:
 
 ```
 Hour, LastHour, Today, Yesterday, TwoDaysAgo, LastMonth
-```
+```-->
 
-Hive Worker uses the [joda-time](http://joda-time.sourceforge.net/) library for date/time manipulation and formatting.
+<!--Hive Worker uses the [joda-time](http://joda-time.sourceforge.net/) library for date/time manipulation and formatting.-->
 
 ## Running ######################################################################
 
-Hive Worker uses [Finagle](https://github.com/twitter/finagle) as a server stack. See Finagle's [User's Guide](http://twitter.github.io/finagle/guide/) for more information.
+Hive Worker uses  
 
 To run:
 
 ```
-mvn exec:java -Dexec.args="-configuration=file:/path/to/hiveworker.properties"
+mvn exec:java -Dexec.args="-foo=bar -other=something"
 ```
