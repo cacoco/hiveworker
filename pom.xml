@@ -214,6 +214,7 @@
   <build>
     <sourceDirectory>src/main/scala</sourceDirectory>
     <testSourceDirectory>src/test/scala</testSourceDirectory>
+    <testOutputDirectory>${project.build.directory}/test-output</testOutputDirectory>
 
     <!-- BUILD PLUGINS -->
     <plugins>
@@ -338,7 +339,6 @@
       <version>1.0-RC2</version>
       <configuration>
         <reportsDirectory>${project.build.directory}/surefire-reports</reportsDirectory>
-        <junitxml>./target</junitxml>
       </configuration>
       <executions>
         <execution>

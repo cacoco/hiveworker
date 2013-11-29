@@ -64,12 +64,7 @@ class JobFlowServiceImpl(
     }
     val request = createJobFlowRequest(jobFlow)
     futurePool {
-      runJobFlow(request) match {
-        case Return(jobFlowId) =>
-          Return(SubmitJobFlowResult(jobFlowId))
-        case _ =>
-          Throw(new Exception("Job flow id is null. Request: [%s] attempt: [%s].".format(request.getName, attempt)))
-      }
+      runJobFlow(request) map SubmitJobFlowResult
     }
   }
 
@@ -77,8 +72,7 @@ class JobFlowServiceImpl(
     val request = new DescribeJobFlowsRequest().
       withJobFlowIds(Seq(jobFlowId).asJavaCollection)
     futurePool {
-      for (describeResult <- Try(elasticMapReduce.describeJobFlows(request)))
-        yield describeResult.getJobFlows.get(0) // pop off first (and only) result.
+      Try(elasticMapReduce.describeJobFlows(request)) map { _.getJobFlows.get(0) } // pop off first (and only) result.
     }
   }
 
@@ -93,8 +87,7 @@ class JobFlowServiceImpl(
     createdAfter map request.withCreatedAfter
     createdBefore map request.withCreatedBefore
     futurePool {
-      for (describeResult <- Try(elasticMapReduce.describeJobFlows(request)))
-        yield describeResult.getJobFlows.asScala.toSeq
+      Try(elasticMapReduce.describeJobFlows(request)) map { _.getJobFlows.asScala.toSeq }
     }
   }
 
