@@ -42,5 +42,10 @@ Hive Worker uses the [joda-time](http://joda-time.sourceforge.net/) library for 
 To run locally:
 
 ```
-mvn exec:java -Dexec.args="-aws.access.key=ACCESSS_KEY -aws.access.secret.key=SECRET_KEY -hadoop.bucket=s3:///hadoop.angstrom.io -hadoop.log.uri=s3://hadoop.angstrom.io/logs -aws.sns.topic.arn.job.errors=arn:aws:sns:us-east-1:111111111111:job-errors -aws.sqs.queue.url.default=https://queue.amazonaws.com/11111111111/HIVE_JOB_FLOW"
+mvn exec:java -Dexec.args="-aws.access.key=ACCESSS_KEY 
+-aws.access.secret.key=SECRET_KEY 
+-hadoop.bucket=s3:///hadoop.angstrom.io 
+-hadoop.log.uri=s3://hadoop.angstrom.io/logs 
+-aws.sns.topic.arn.job.errors=arn:aws:sns:us-east-1:111111111111:job-errors 
+-aws.sqs.queue.url.default=https://queue.amazonaws.com/11111111111/HIVE_JOB_FLOW"
 ```
