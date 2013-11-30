@@ -2,24 +2,21 @@ package io.angstrom.hiveworker.service.impl
 
 import com.amazonaws.services.elasticmapreduce.AmazonElasticMapReduce
 import com.amazonaws.services.elasticmapreduce.model._
-import com.twitter.util.Await
+import com.twitter.util.{FuturePool, Await}
 import io.angstrom.hiveworker.DefaultHiveEnvironment
 import io.angstrom.hiveworker.service.api.JobFlow
 import io.angstrom.hiveworker.service.api.SubmitJobFlowResult
+import io.angstrom.hiveworker.test.UnitTest
 import io.angstrom.hiveworker.util.{StepArgument, Step, JobType}
 import org.apache.commons.lang.RandomStringUtils
-import org.easymock.EasyMock.anyObject
-import org.easymock.EasyMock.reset
-import org.scalatest.ShouldMatchers
-import org.scalatest.mock.EasyMockSugar
-import org.scalatest.testng.TestNGSuite
+import org.joda.time.DateTime
+import org.mockito.Matchers._
+import org.mockito.Mockito._
 import org.testng.annotations._
 import scala.collection.JavaConverters.asJavaCollectionConverter
 
 class JobFlowServiceImplTest
-  extends TestNGSuite
-  with ShouldMatchers
-  with EasyMockSugar {
+  extends UnitTest {
 
   /* Invariants */
   val hiveEnvironment = DefaultHiveEnvironment
@@ -31,9 +28,10 @@ class JobFlowServiceImplTest
 
   /* mocks */
   val mapReduceClient = mock[AmazonElasticMapReduce]
-  implicit val mocks = MockObjects(mapReduceClient)
 
-  /* */
+  override val mocks = Seq(mapReduceClient)
+
+  /* service */
   val service = JobFlowServiceImpl(
     mapReduceClient,
     hiveEnvironment,
@@ -41,16 +39,15 @@ class JobFlowServiceImplTest
     bucket,
     logUri,
     masterInstanceType,
-    slaveInstanceType)
+    slaveInstanceType,
+    FuturePool.immediatePool)
 
   @BeforeTest(alwaysRun = true)
   def beforeTest() {}
 
   @AfterTest(alwaysRun = true)
   def afterTest() {
-    for (mock <- mocks.mocks) {
-      reset(mock)
-    }
+    resetAll()
   }
 
   @Test def testCreateJobFlowRequest() {
@@ -67,6 +64,7 @@ class JobFlowServiceImplTest
       Some(1),
       Some(1),
       steps: _*)
+
     val request = service.createJobFlowRequest(jobFlow)
     request shouldNot be(null)
     request.getName shouldNot be(null)
@@ -76,9 +74,7 @@ class JobFlowServiceImplTest
   @Test def testSubmitJobFlow() {
     val jobFlowId = randomJobFlowId()
     val runJobFlowResult = new RunJobFlowResult().withJobFlowId(jobFlowId)
-    expecting {
-      mapReduceClient.runJobFlow(null).andReturn(runJobFlowResult)
-    }
+    when(mapReduceClient.runJobFlow(any[RunJobFlowRequest])).thenReturn(runJobFlowResult)
 
     val steps = Seq(
       Step("LAST_HOUR", StepArgument.LastHour),
@@ -94,37 +90,38 @@ class JobFlowServiceImplTest
       Some(1),
       steps: _*)
 
-    whenExecuting {
-      val result = Await.result(service.submitJobFlow(1, jobFlow)).get()
-      result should be(SubmitJobFlowResult(jobFlowId))
-    }
+    val result = Await.result(service.submitJobFlow(1, jobFlow)).get()
+    result should be(SubmitJobFlowResult(jobFlowId))
   }
 
   @Test def testDescribeJobFlow() {
     val jobFlowId = randomJobFlowId()
     val result = new DescribeJobFlowsResult().withJobFlows(mockJobFlowDetailsWithIds(jobFlowId).asJavaCollection)
-    expecting {
-      mapReduceClient.describeJobFlows(anyObject().asInstanceOf[DescribeJobFlowsRequest]).andReturn(result)
-    }
+    when(mapReduceClient.describeJobFlows(any[DescribeJobFlowsRequest])).thenReturn(result)
 
-    whenExecuting {
-      val jobFlowDetail = Await.result(service.describeJobFlow(jobFlowId)).get()
-      jobFlowDetail shouldNot be(null)
-      jobFlowDetail.getJobFlowId should be(jobFlowId)
-    }
+    val jobFlowDetail = Await.result(service.describeJobFlow(jobFlowId)).get()
+    jobFlowDetail shouldNot be(null)
+    jobFlowDetail.getJobFlowId should be(jobFlowId)
   }
 
-  @Test def testDescribeJobFlows() {
+  @Test def testDescribeCompletedJobFlows() {
     val result = new DescribeJobFlowsResult().withJobFlows(mockJobFlowDetails.asJavaCollection)
-    expecting {
-      mapReduceClient.describeJobFlows(anyObject().asInstanceOf[DescribeJobFlowsRequest]).andReturn(result)
-    }
+    when(mapReduceClient.describeJobFlows(any[DescribeJobFlowsRequest])).thenReturn(result)
 
-    whenExecuting {
-      val jobFlowDetails = Await.result(service.describeJobFlows()).get()
-      jobFlowDetails shouldNot be(null)
-      jobFlowDetails.size should be > 0
-    }
+    val jobFlowDetails = Await.result(service.describeJobFlows(jobFlowStates = Seq("COMPLETED"))).get()
+    jobFlowDetails shouldNot be(null)
+    jobFlowDetails.size should be > 0
+  }
+
+  @Test def testDescribeCompletedJobFlowsCreatedAfterDate() {
+    val result = new DescribeJobFlowsResult().withJobFlows(mockJobFlowDetails.asJavaCollection)
+    when(mapReduceClient.describeJobFlows(any[DescribeJobFlowsRequest])).thenReturn(result)
+
+    val twoDaysAgo = DateTime.now.minusDays(2)
+
+    val jobFlowDetails = Await.result(service.describeJobFlows(createdAfter = Some(twoDaysAgo.toDate), jobFlowStates = Seq("COMPLETED"))).get()
+    jobFlowDetails shouldNot be(null)
+    jobFlowDetails.size should be > 0
   }
 
   /* Test helpers */

@@ -8,3 +8,4 @@ release.properties
 *.iws
 *.ipr
 .idea/
+test-output/

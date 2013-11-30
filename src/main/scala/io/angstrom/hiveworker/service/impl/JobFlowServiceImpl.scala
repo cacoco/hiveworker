@@ -28,7 +28,8 @@ object JobFlowServiceImpl {
             bucket: String,
             logUri: String,
             masterInstanceType: String,
-            slaveInstanceType: String) = {
+            slaveInstanceType: String,
+            futurePool: FuturePool = FuturePool.unboundedPool) = {
     new JobFlowServiceImpl(
       elasticMapReduce,
       hiveEnvironment,
@@ -36,7 +37,8 @@ object JobFlowServiceImpl {
       bucket,
       logUri,
       masterInstanceType,
-      slaveInstanceType)
+      slaveInstanceType,
+      futurePool)
   }
 }
 
@@ -47,16 +49,15 @@ class JobFlowServiceImpl(
   val bucket: String,
   val logUri: String,
   val masterInstanceType: String,
-  val slaveInstanceType: String) extends JobFlowService {
+  val slaveInstanceType: String,
+  futurePool: FuturePool) extends JobFlowService {
 
   import JobFlowServiceImpl._
-
-  private lazy val futurePool = FuturePool.unboundedPool
 
   /* Public */
 
   def submitJobFlow(attempt: Integer, jobFlow: JobFlow): Future[Try[SubmitJobFlowResult]] = {
-    info("Creating job flow task for script: [%s], attempt: [%s]".format(jobFlow.script, attempt))
+    debug("Submitting job flow task for script: [%s], attempt: [%s]".format(jobFlow.script, attempt))
 
     val maxAttempts: Int = jobFlow.maxAttempts getOrElse 1
     if (attempt > maxAttempts) {
@@ -69,6 +70,7 @@ class JobFlowServiceImpl(
   }
 
   def describeJobFlow(jobFlowId: String): Future[Try[JobFlowDetail]] = {
+    debug("Describing job flow with id: " + jobFlowId)
     val request = new DescribeJobFlowsRequest().
       withJobFlowIds(Seq(jobFlowId).asJavaCollection)
     futurePool {
@@ -84,14 +86,18 @@ class JobFlowServiceImpl(
     val request = new DescribeJobFlowsRequest().
       withJobFlowIds(jobFlowIds.asJavaCollection).
       withJobFlowStates(jobFlowStates: _*)
+
     createdAfter map request.withCreatedAfter
     createdBefore map request.withCreatedBefore
+    debug("Describing job flows with criteria: " + request)
     futurePool {
       Try(elasticMapReduce.describeJobFlows(request)) map { _.getJobFlows.asScala.toSeq }
     }
   }
 
   def terminateJobFlows(jobFlowIds: String*): Future[Unit] = {
+    debug("Terminating job flows: " + jobFlowIds.mkString(","))
+
     val request = new TerminateJobFlowsRequest().withJobFlowIds(jobFlowIds:_ *)
     futurePool {
       elasticMapReduce.terminateJobFlows(request)
@@ -101,6 +107,7 @@ class JobFlowServiceImpl(
   /* Private */
 
   private[impl] def createJobFlowRequest(jobFlowConfiguration: JobFlow): RunJobFlowRequest = {
+    debug("Creating job flow request for configuration: " + jobFlowConfiguration.name)
     val name = jobFlowConfiguration.canonicalName
 
     val __configureDaemons = new BootstrapActionConfig()

@@ -89,7 +89,7 @@ object ServicesModule extends AbstractModule with ScalaModule {
     @Named("hadoop.log.uri") logUri: String,
     @Named("hadoop.instance.type.master") masterInstanceType: String,
     @Named("hadoop.instance.type.slave") slaveInstanceType: String): JobFlowService = {
-    new JobFlowServiceImpl(
+    JobFlowServiceImpl(
       elasticMapReduce,
       hiveEnvironment,
       defaultJobActionOnFailure,
