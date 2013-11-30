@@ -28,39 +28,19 @@ mvn clean install
 
 ## Configuration ################################################################
 
-<!--```
-aws.access.key=YOUR_KEY
-aws.access.secret.key=YOUR_SECRET
-aws.client.connection.timeout=50000
-aws.client.max.connections=10
-aws.client.socket.timeout=50000
-aws.sns.topic.arn.job.errors=arn:aws:sns:us-west-2:111111111111:mapreduce-job-errors
-aws.sqs.queue.url.default=https://queue.amazonaws.com/111111111111/HIVE_JOB_FLOW
-hadoop.bucket=s3://hadoop.angstrom.io
-hadoop.instance.type.master=m1.small
-hadoop.instance.type.slave=m1.small
-hadoop.log.uri=s3://hadoop.angstrom.io/logs
-job.action.onfailure=TERMINATE_JOB_FLOW
-jobs.configuration.file=/path/to/job_configuration.scala
-```-->
-
-<!--For the Job configuration file, see ```examples/example_config.scala``` as an example.
-
 The parsing of the job configuration steps supports a basic form of date/time formatting if the value sent is of type ```io.angstrom.hiveworker.util.StepArgument```. The default timezone is __UTC__ and
 is not configurable. Supported formatting includes:
 
 ```
 Hour, LastHour, Today, Yesterday, TwoDaysAgo, LastMonth
-```-->
+```
 
-<!--Hive Worker uses the [joda-time](http://joda-time.sourceforge.net/) library for date/time manipulation and formatting.-->
+Hive Worker uses the [joda-time](http://joda-time.sourceforge.net/) library for date/time manipulation and formatting.
 
 ## Running ######################################################################
 
-Hive Worker uses  
-
-To run:
+To run locally:
 
 ```
-mvn exec:java -Dexec.args="-foo=bar -other=something"
+mvn exec:java -Dexec.args="-aws.access.key=ACCESSS_KEY -aws.access.secret.key=SECRET_KEY -hadoop.bucket=s3:///hadoop.angstrom.io -hadoop.log.uri=s3://hadoop.angstrom.io/logs -aws.sns.topic.arn.job.errors=arn:aws:sns:us-east-1:111111111111:job-errors -aws.sqs.queue.url.default=https://queue.amazonaws.com/11111111111/HIVE_JOB_FLOW"
 ```

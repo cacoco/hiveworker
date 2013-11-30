@@ -20,18 +20,18 @@ object Server
 
   /* Flags to bind to named properties */
   val flags = Seq(
-    flag("aws.access.key", "FOO", ""),
-    flag("aws.access.secret.key", "BAR", ""),
-    flag("aws.client.connection.timeout", "50000", ""),
-    flag("aws.client.max.connections", "10", ""),
-    flag("aws.client.socket.timeout", "50000", ""),
-    flag("aws.sns.topic.arn.job.errors", "arn:aws:sns:us-east-1:111111111111:job-errors", ""),
-    flag("aws.sqs.queue.url.default", "https://queue.amazonaws.com/11111111111/HIVE_JOB_FLOW", ""),
-    flag("hadoop.bucket", "s3://hadoop.angstrom.io", ""),
-    flag("hadoop.instance.type.master", "m1.small", ""),
-    flag("hadoop.instance.type.slave", "m1.small", ""),
-    flag("hadoop.log.uri", "s3://hadoop.angstrom.io/logs", ""),
-    flag("job.action.onfailure", "TERMINATE_JOB_FLOW", ""))
+    flag("aws.access.key", "FOO", "AWS access key"),
+    flag("aws.access.secret.key", "BAR", "AWS secret access key"),
+    flag("aws.client.connection.timeout", "50000", "Default client connection timeout"),
+    flag("aws.client.max.connections", "10", "Default client max connections"),
+    flag("aws.client.socket.timeout", "50000", "Default client socket timeout"),
+    flag("aws.sns.topic.arn.job.errors", "arn:aws:sns:us-east-1:111111111111:job-errors", "Error message queue"),
+    flag("aws.sqs.queue.url.default", "https://queue.amazonaws.com/11111111111/HIVE_JOB_FLOW", "Job queue"),
+    flag("hadoop.bucket", "s3://hadoop.angstrom.io", "EMR bucket URI"),
+    flag("hadoop.instance.type.master", "m1.small", "Default EMR master instance size."),
+    flag("hadoop.instance.type.slave", "m1.small", "Default EMR slave instance size"),
+    flag("hadoop.log.uri", "s3://hadoop.angstrom.io/logs", "EMR log URI"),
+    flag("job.action.onfailure", "TERMINATE_JOB_FLOW", "Default action on failure"))
   val dryRun = flag("dry.run", false, "Don't schedule jobs")
 
   /* Mutable state */
