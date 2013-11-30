@@ -32,9 +32,8 @@ abstract class JobProcessor(
     val jobsToCreate = jobs filterNot { createdJobs contains _.canonicalName }
     log.debug("jobs to create:", jobsToCreate)
 
-//      for (job <- jobsToCreate) {
-//        service.submitJobFlow(1, job)
-//      }
-//    }
+    for (job <- jobsToCreate) {
+      jobFlowService.submitJobFlow(1, job)
+    }
   }
 }
