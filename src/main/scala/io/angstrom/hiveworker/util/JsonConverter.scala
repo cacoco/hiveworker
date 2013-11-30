@@ -1,7 +1,7 @@
 package io.angstrom.hiveworker.util
 
-import com.fasterxml.jackson.core.util.DefaultPrettyPrinter
-import com.fasterxml.jackson.databind.ObjectMapper
+import com.fasterxml.jackson.core.util.MinimalPrettyPrinter
+import com.fasterxml.jackson.databind.{PropertyNamingStrategy, ObjectMapper}
 import com.fasterxml.jackson.module.scala.DefaultScalaModule
 import org.jboss.netty.buffer.ChannelBuffers
 import org.jboss.netty.handler.codec.http.{HttpResponseStatus, HttpVersion, DefaultHttpResponse, HttpResponse}
@@ -10,8 +10,8 @@ object JsonConverter {
   private[this] val writer = {
     val mapper = new ObjectMapper
     mapper.registerModule(DefaultScalaModule)
-    val printer = new DefaultPrettyPrinter
-    printer.indentArraysWith(new DefaultPrettyPrinter.Lf2SpacesIndenter)
+    mapper.setPropertyNamingStrategy(PropertyNamingStrategy.CAMEL_CASE_TO_LOWER_CASE_WITH_UNDERSCORES)
+    val printer = new MinimalPrettyPrinter
     mapper.writer(printer)
   }
 

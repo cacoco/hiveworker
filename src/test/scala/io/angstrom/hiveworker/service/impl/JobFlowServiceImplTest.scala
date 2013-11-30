@@ -54,7 +54,7 @@ class JobFlowServiceImplTest
     val steps = Seq(
       Step("LAST_HOUR", StepArgument.LastHour),
       Step("TODAY", StepArgument.Today),
-      Step("HH", StepArgument.Hour))
+      Step("HH", StepArgument.Hour)).toMap
 
     val jobFlow = JobFlow(
       JobType.HOURLY,
@@ -63,7 +63,7 @@ class JobFlowServiceImplTest
       Some(true),
       Some(1),
       Some(1),
-      steps: _*)
+      steps)
 
     val request = service.createJobFlowRequest(jobFlow)
     request shouldNot be(null)
@@ -79,7 +79,7 @@ class JobFlowServiceImplTest
     val steps = Seq(
       Step("LAST_HOUR", StepArgument.LastHour),
       Step("TODAY", StepArgument.Today),
-      Step("HH", StepArgument.Hour))
+      Step("HH", StepArgument.Hour)).toMap
 
     val jobFlow = JobFlow(
       JobType.HOURLY,
@@ -88,7 +88,7 @@ class JobFlowServiceImplTest
       Some(true),
       Some(1),
       Some(1),
-      steps: _*)
+      steps)
 
     val result = Await.result(service.submitJobFlow(1, jobFlow)).get()
     result should be(SubmitJobFlowResult(jobFlowId))

@@ -111,10 +111,10 @@ object ServicesModule extends AbstractModule with ScalaModule {
           visibleToAllUsers = Some(true),
           instances = Some(4),
           maxAttempts = Some(5),
-          Step("foo", "bar"),
-          Step("LAST_HOUR", StepArgument.LastHour),
-          Step("TODAY", StepArgument.Today),
-          Step("HH", StepArgument.Hour)),
+          Seq(Step("foo", "bar"),
+            Step("LAST_HOUR", StepArgument.LastHour),
+            Step("TODAY", StepArgument.Today),
+            Step("HH", StepArgument.Hour)).toMap),
         JobFlow(
           `type` = JobType.DAILY,
           script = "daily_impression_job.q",
@@ -122,9 +122,9 @@ object ServicesModule extends AbstractModule with ScalaModule {
           visibleToAllUsers = Some(true),
           instances = Some(8),
           maxAttempts = Some(5),
-          Step("YESTERDAY", StepArgument.Yesterday),
-          Step("TODAY", StepArgument.Today),
-          Step("HH", StepArgument.Hour))
+          Seq(Step("YESTERDAY", StepArgument.Yesterday),
+            Step("TODAY", StepArgument.Today),
+            Step("HH", StepArgument.Hour)).toMap)
       )
     }
   }

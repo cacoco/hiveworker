@@ -20,7 +20,7 @@ case class JobFlow(
   visibleToAllUsers: Option[Boolean],
   instances: Option[Int],
   maxAttempts: Option[Int],
-  steps: Step*) {
+  steps: Map[String, String] = Map.empty) {
 
   def canonicalName = {
     val prefix = name getOrElse script.replaceAll(".q", "")

@@ -142,7 +142,7 @@ class JobFlowServiceImpl(
       .withActionOnFailure(defaultJobActionOnFailure)
     // Make sure to add the bucket as an step argument
     val arguments = jobFlowConfiguration.steps.foldLeft(List("-d", "%s=%s".format(Bucket, bucket))) { (list, step) =>
-      list ++ List("-d", "%s=%s".format(step.name, step.value))
+      list ++ List("-d", "%s=%s".format(step._1, step._2))
     }
     __runHiveScript.withHadoopJarStep {
       stepFactory.newRunHiveScriptStep(path, arguments.asJavaCollection.toArray(new Array[String](arguments.size)): _*)

@@ -22,7 +22,7 @@ object Step {
   val DayPattern = DateTimeFormat.forPattern("yyyy-MM-dd")
   val MonthPattern = DateTimeFormat.forPattern("yyyy-MM")
 
-  def apply(name: String, value: Any): Step = {
+  def apply(name: String, value: Any): (String, String) = {
     val now = DateTime.now(DateTimeZone.UTC)
     val v = value match {
       case s: String => s
@@ -44,9 +44,6 @@ object Step {
         }
       case _ => throw new IllegalArgumentException
     }
-
-    new Step(name, v)
+    name -> v
   }
 }
-
-protected[hiveworker] class Step(val name: String, val value: String)
