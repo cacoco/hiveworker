@@ -1,4 +1,4 @@
-#Hive Worker
+# Hive Worker
 ![Hive Worker](./honeycomb.png)
 
 [![Build Status](https://travis-ci.org/cacoco/hiveworker.png?branch=master)](https://travis-ci.org/cacoco/hiveworker)
