@@ -1,5 +1,5 @@
 #Hive Worker
-![Hive Worker](http://www.gvsu.edu/gvnow/files/photos/EE23917D-D2F3-6596-4A71E2C7851753DA.jpg "Hive Worker")
+![Hive Worker](./honeycomb.png)
 
 [![Build Status](https://travis-ci.org/cacoco/hiveworker.png?branch=master)](https://travis-ci.org/cacoco/hiveworker)
 
@@ -49,3 +49,5 @@ mvn exec:java -Dexec.args="-aws.access.key=ACCESSS_KEY
 -aws.sns.topic.arn.job.errors=arn:aws:sns:us-east-1:111111111111:job-errors 
 -aws.sqs.queue.url.default=https://queue.amazonaws.com/11111111111/HIVE_JOB_FLOW"
 ```
+
+<a href="https://www.flaticon.com/free-icons/honeycomb" title="honeycomb icons">Honeycomb icons created by Freepik - Flaticon</a>
